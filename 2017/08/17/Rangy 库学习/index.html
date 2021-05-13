@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近想给自己的阅读器加上注释的功能，一番折腾之后发现 Rangy  这个好用的库。使用这个库可以便捷地实现获取和保存文本选取，以及对文本选取添加样式等功能。下面让我们来初步了解一下它的用法，更详细的内容可以查阅它的文档 Here 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rangy 库学习">
+<meta property="og:url" content="http://yoursite.com/2017/08/17/Rangy%20%E5%BA%93%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="最近想给自己的阅读器加上注释的功能，一番折腾之后发现 Rangy  这个好用的库。使用这个库可以便捷地实现获取和保存文本选取，以及对文本选取添加样式等功能。下面让我们来初步了解一下它的用法，更详细的内容可以查阅它的文档 Here 。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-16T16:55:22.000Z">
+<meta property="article:modified_time" content="2021-05-13T15:21:53.808Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/08/17/Rangy%20%E5%BA%93%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Rangy 库学习 | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/17/Rangy%20%E5%BA%93%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rangy 库学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-17 00:55:22" itemprop="dateCreated datePublished" datetime="2017-08-17T00:55:22+08:00">2017-08-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 23:21:53" itemprop="dateModified" datetime="2021-05-13T23:21:53+08:00">2021-05-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近想给自己的阅读器加上注释的功能，一番折腾之后发现 <a target="_blank" rel="noopener" href="https://github.com/timdown/rangy">Rangy</a>  这个好用的库。使用这个库可以便捷地实现获取和保存文本选取，以及对文本选取添加样式等功能。下面让我们来初步了解一下它的用法，更详细的内容可以查阅它的文档 <a target="_blank" rel="noopener" href="https://github.com/timdown/rangy/wiki">Here</a> 。</p>
+<a id="more"></a>
+
+<p>&nbsp;</p>
+<h2 id="Selection-和-Range-对象"><a href="#Selection-和-Range-对象" class="headerlink" title="Selection 和 Range 对象"></a>Selection 和 Range 对象</h2><p>首先我们需要了解 <code>Selection</code> 和 <code>Range</code> 这两个和文本选取有关的对象。</p>
+<p>Selection 对象表示用户选择的文本范围或插入符号的当前位置。它代表页面中的文本选区，可能横跨多个元素。文本选区由用户拖拽鼠标经过文字而产生。要获取用于检查或修改的 Selection 对象，请调用  <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/getSelection"><code>window.getSelection()</code></a>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sel = <span class="built_in">window</span>.getSelection(); <span class="comment">// 获取原生 Selection 对象</span></span><br><span class="line">ver text = sel.toString(); <span class="comment">// 获取选中文本</span></span><br><span class="line"><span class="keyword">var</span> range  = sel.getRangeAt(<span class="number">0</span>); <span class="comment">// 获取对应的 Range 对象</span></span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p>一个 <code>Selection</code> 对象可能包含多个 <code>Range</code> 对象，通常只包含一个。因为用户通常下只能选择一个范围，但是有的时候用户也有可能选择多个范围（例如当用户按下 Control 按键并框选多个区域时，Chrome 中禁止了这个操作，原译者注）。</p>
+<p>&nbsp;</p>
+<blockquote>
+<p><strong>注意</strong>：Rangy 库根据 DOM 规范自己实现了一个 Selection 对象和 Range 对象，下面方法的 API 中的 Selection 对象和 Range 对象都是指自己实现的对象。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sel = rangy.getSelection(); <span class="comment">// 获取 **自定义** 的 Selection 对象</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// --- 获取 iframe 的 Selection 对象</span></span><br><span class="line"><span class="keyword">var</span> iframe = <span class="built_in">document</span>.getElementById(<span class="string">&quot;foo&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> sel = rangy.getSelection(iframe);</span><br><span class="line"></span><br><span class="line"><span class="comment">// --- 选中某个节点</span></span><br><span class="line"><span class="keyword">var</span> el = <span class="built_in">document</span>.getElementById(<span class="string">&quot;foo&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> range = rangy.createRange();</span><br><span class="line">range.selectNodeContents(el);</span><br><span class="line"><span class="keyword">var</span> sel = rangy.getSelection();</span><br><span class="line">sel.setSingleRange(range);</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<blockquote>
+<p> <strong>注意</strong>：在下面的 API 里，一个或多个函数或方法参数周围的方括号表示参数是可选的。</p>
+</blockquote>
+<p>&nbsp;</p>
+<h2 id="Serializer-模块"><a href="#Serializer-模块" class="headerlink" title="Serializer 模块"></a>Serializer 模块</h2><p>Serializer Module 可以对 <code>Selection</code> 对象和 <code>Range</code> 对象进行序列化和反序列化，有了它之后我们就可以实现注释的保存。</p>
+<p>这个模块可以将鼠标选中的文本区域序列化为一个字符串进行存储，并在需要的时候反序列化以恢复成文本被鼠标选中的模样。</p>
+<p>值得我们注意的是 <code>Selection</code> 对象的保存于 DOM 树密切相关，因此序列化和反序列化是比较“脆弱的”，对于动态页面可能不能做到正常的序列化和反序列化。另外，在一个浏览器上进行的序列化结果，可能不能在另一个浏览器被正常反序列化。</p>
+<p>下面是两个常用的方法：</p>
+<ul>
+<li><code>rangy.serializeSelection([Selection sel[, Boolean omitChecksum, [Element rootNode]])</code> <ul>
+<li>不传入参数时，默认序列化当前页面的选中文本区域；传入参数 <code>sel</code> 时，会对传入的这个 <code>Selection</code> 对象进行序列化。</li>
+<li>参数 <code>omitChecksum</code> 表示是否省略校验和，这个在文档很大的时候建议把它设置为 <code>true</code> 以加快速度。—— <strong>注</strong>：“校验和”是为了弥补上面所说的“脆弱性”而进行的校验计算。</li>
+<li>参数是 <code>rootNode</code> ，如字面意思“根节点”。Serializer Module 会处理“根节点”下的被选中的文本区域，将它们序列化。默认值是当前文档的根节点。</li>
+<li>方法最后会返回一个字符串，代表选中部分</li>
+</ul>
+</li>
+<li><code>rangy.deserializeSelection(String serializedSelection[, Element rootNode[, Window win]])</code> <ul>
+<li>接收上一个方法返回的字符串作为参数，反序列化。</li>
+<li>其余参数和上面方法参数类似</li>
+<li>返回一个 <code>Selection</code> 对象</li>
+</ul>
+</li>
+<li><code>rangy.serializeRange(Range range[, Boolean omitChecksum, [Element rootNode]])</code> / <code>rangy.deserializeRange(String serializedRange[, Element rootNode[, Document doc]])</code> 与上面两个方法类似，是对 <code>Range</code> 对象序列化和反序列化的版本。</li>
+</ul>
+<p>对于上述方法的使用我们可以看看下面这个简单的例子：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate quidem, tempore. Cupiditate veritatis, doloribus provident quae impedit odit alias minus accusamus distinctio corrupti sapiente dolorum eius, voluptates dolores ipsa veniam.</span><br><span class="line">	<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;serialize&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;ser()&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;deserialize&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;dser()&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;../../lib/rangy-core.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;../../lib/rangy-serializer.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span></span><br><span class="line"><span class="javascript">	<span class="keyword">var</span> text = <span class="string">&#x27;&#x27;</span>;</span></span><br><span class="line"><span class="javascript">	<span class="keyword">var</span> sel = <span class="literal">null</span>;</span></span><br><span class="line">    </span><br><span class="line"><span class="javascript">	<span class="function"><span class="keyword">function</span> <span class="title">ser</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line">        sel = rangy.getSelection();</span><br><span class="line">		text = rangy.serializeSelection(sel);</span><br><span class="line"><span class="javascript">		<span class="built_in">console</span>.log(text);</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="function"><span class="keyword">function</span> <span class="title">dser</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line">		sel = rangy.deserializeSelection(text);</span><br><span class="line"><span class="javascript">		<span class="built_in">console</span>.log(sel);</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		rangy.init(); <span class="comment">// 必要的初始化</span></span></span><br><span class="line">	&#125;;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 针对 iframe 的情况</span></span><br><span class="line"><span class="keyword">var</span> iframe = <span class="built_in">document</span>.getElementById(<span class="string">&quot;foo&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;</span><br><span class="line"><span class="keyword">var</span> selection = rangy.getSelection(iframe); <span class="comment">// 获取 iframe 的 Selection 对象</span></span><br><span class="line"><span class="keyword">var</span> serializeSelection = rangy.serializeSelection(selection);</span><br><span class="line">rangy.deserializeSelection(serializeSelection, <span class="literal">null</span>, iframeWin);</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<h2 id="Class-Applier-模块"><a href="#Class-Applier-模块" class="headerlink" title="Class Applier 模块"></a>Class Applier 模块</h2><p>上面我们已经实现了获取文本选取和保存恢复文本选取的功能了，最后一步就是对选取应用样式了（比如说高亮选取部分）。</p>
+<p>我们可以使用 Class Applier 模块，这个模块允许我们使用特定的标签包裹已经选取的文本，并且对此标签应用在 CSS  中已定义样式。</p>
+<p>&nbsp;</p>
+<p>使用的方法如下：</p>
+<ul>
+<li><code>rangy.createClassApplier(String theClass[, Object options[, Array tagNames]])</code> <ul>
+<li>第一个参数 <code>theClass</code> 必须是在 CSS 中声明过的一个类，不可少。</li>
+<li>第二个参数 <code>options</code> 是个配置对象，允许你对 class applier 的行为进行操作，主要包含下面的属性：<ul>
+<li><code>elementTagName</code> ：string，默认为 <code>&quot;span&quot;</code>，表示注释标签 。class applier 会使用 <code>&lt;span&gt;</code> 标签包裹用户选中的区域，并对 <code>&lt;span&gt;</code> 标签应用 <code>theClass</code> 这个类，于是结果会变成这样：<code>&lt;span class=&quot;类名&quot;&gt;用户选中的部分&lt;/span&gt;</code> 。</li>
+<li><code>elementProperties</code> ：object。这个属性值是一个对象，对象的每个属性和值，都会变成注释标签的属性和值。如：<code>elementProperties: &#123; href: &#39;#&#39;&#125;</code> ，这个配置会让生成的注释标签变成这样 <code>&lt;span href=&quot;#&quot;&gt;&lt;/span&gt;</code> 。<strong>注意</strong>：这个属性很方便，甚至可以用 <code>elementProperties: &#123; onclick: function () &#123;&#125; &#125;</code> 来挂载回调函数。</li>
+<li><code>onElementCreate</code> ： 如名字所示，当注释标签被创建时调用的回调函数。回调函数接收两个参数：第一个是对创建标签的引用，第二个是当前的 class applier 对象。</li>
+</ul>
+</li>
+<li>函数返回一个 <code>ClassApplier </code> 对象，使用这个对象可以调用下面的方法来为选中区域添加或删除 <code>theClass</code> 定义的样式。</li>
+</ul>
+</li>
+<li><code>applyToSelection([Window win])</code> <ul>
+<li>为选中内容添加预设的样式，不提供参数时默认监听当前的窗口；也可以提供一个 <code>Window </code> 对象（比如操作 <code>iframe</code> 时可以传入 <code>iframe.contentWindow</code> ，下同）</li>
+</ul>
+</li>
+<li><code>undoToSelection([Window win])</code> <ul>
+<li>消除 class applier 为选中内容添加的样式。</li>
+</ul>
+</li>
+<li><code>isAppliedToSelection([Window win])</code> <ul>
+<li>判断选中部分 <strong>都</strong> 被 class applier 添加了预设的样式</li>
+</ul>
+</li>
+<li><code>toggleSelection([Window win])</code> <ul>
+<li>有则添加，无则删除预设的样式</li>
+</ul>
+</li>
+<li><code>applyToRange(Range range)</code> / <code>undoToRange(Range range)</code> / <code>isAppliedToRange(Range range)</code> / <code>isAppliedToRange(Range range)</code> / <code>toggleRange(Range range)</code> <ul>
+<li>作用和上面对应方法类似</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>对于上述方法的使用我们可以看看下面这个简单的例子：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">      	// 预设的样式</span><br><span class="line"><span class="css">		<span class="selector-class">.red</span> &#123;</span></span><br><span class="line">			background-color: red;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate quidem, tempore. Cupiditate veritatis, doloribus provident quae impedit odit alias minus accusamus distinctio corrupti sapiente dolorum eius, voluptates dolores ipsa veniam.</span><br><span class="line">	<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;class applier&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;classApply()&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;remove class&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;classRemove()&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;../../lib/rangy-core.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">src</span>=<span class="string">&quot;../../lib/rangy-classapplier.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span></span><br><span class="line"><span class="javascript">	<span class="keyword">var</span> applier;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">	<span class="function"><span class="keyword">function</span> <span class="title">classApply</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		applier.applyToSelection(); <span class="comment">// 为选中部分应用样式</span></span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="javascript">	<span class="function"><span class="keyword">function</span> <span class="title">classRemove</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		applier.undoToSelection(); <span class="comment">// 取消选中部分的样式</span></span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">		rangy.init(); <span class="comment">// 必要的初始化</span></span></span><br><span class="line"><span class="javascript">		applier = rangy.createClassApplier(<span class="string">&quot;red&quot;</span>); <span class="comment">// 创建 ClassApplier</span></span></span><br><span class="line">	&#125;;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">MDN</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/timdown/rangy/wiki">Rangy wiki</a> </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/11586115/range-deserializeselection-checksum-error">stackoverflow</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/06/26/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93/" rel="prev" title="练手项目小结">
+      <i class="fa fa-chevron-left"></i> 练手项目小结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/05/%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E4%BD%BF%E7%94%A8SVG/" rel="next" title="学习在网页中使用 SVG">
+      学习在网页中使用 SVG <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Selection-%E5%92%8C-Range-%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">Selection 和 Range 对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Serializer-%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">Serializer 模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-Applier-%E6%A8%A1%E5%9D%97"><span class="nav-number">3.</span> <span class="nav-text">Class Applier 模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

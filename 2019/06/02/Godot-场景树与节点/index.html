@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Godot 是一款开源的游戏引擎，同时支持 2D 和 3D 游戏的开发。相对于 Unity 3D 来说，Godot 的学习曲线更加平缓，对于初学者来说是一个不错的选择。本文是本人最近阅读 Godot 官方文档和查阅相关资料后的一点个人理解，如果有错误的地方还请各位朋友指出。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Godot 场景树与节点">
+<meta property="og:url" content="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="Godot 是一款开源的游戏引擎，同时支持 2D 和 3D 游戏的开发。相对于 Unity 3D 来说，Godot 的学习曲线更加平缓，对于初学者来说是一个不错的选择。本文是本人最近阅读 Godot 官方文档和查阅相关资料后的一点个人理解，如果有错误的地方还请各位朋友指出。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E5%9C%BA%E6%99%AF%E6%A0%91%E7%8A%B6%E6%80%81.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/%E7%94%BB%E4%B8%AD%E7%94%BB%E6%95%88%E6%9E%9C.gif">
+<meta property="article:published_time" content="2019-06-02T11:12:23.000Z">
+<meta property="article:modified_time" content="2021-05-13T15:21:53.798Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="Godot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E5%9C%BA%E6%99%AF%E6%A0%91%E7%8A%B6%E6%80%81.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Godot 场景树与节点 | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Godot 场景树与节点
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-02 19:12:23" itemprop="dateCreated datePublished" datetime="2019-06-02T19:12:23+08:00">2019-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 23:21:53" itemprop="dateModified" datetime="2021-05-13T23:21:53+08:00">2021-05-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://godotengine.org/">Godot</a> 是一款开源的游戏引擎，同时支持 2D 和 3D 游戏的开发。相对于 Unity 3D 来说，Godot 的学习曲线更加平缓，对于初学者来说是一个不错的选择。本文是本人最近阅读 Godot 官方文档和查阅相关资料后的一点个人理解，如果有错误的地方还请各位朋友指出。</p>
+<a id="more"></a>
+
+<p>&nbsp;</p>
+<p>Godot 引擎的执行流程如下。在一开始时先根据所属的平台来创建一个 <code>OS</code> 类的实例。然后执行必要的初始化工作，加载所有驱动程序、服务器、脚本语言、场景系统等。初始化完成后，需要向 <code>OS</code> 提供一个 <code>MainLoop</code> 来运行。我们编写的游戏的所有节点的逻辑都是在引擎的主循环中执行的。</p>
+<p>游戏所有运行中的节点组成了一棵树，我们称其为场景树（<code>SceneTree</code>）。场景树 <code>SceneTree</code> 是 <code>MainLoop</code> 的子类，里面包含的逻辑会在程序启动后被游戏引擎在主循环中执行。我们可以通过调用当前场景树中任意节点的 <code>get_tree()</code> 方法来获取当前场景树的实例对象（<code>SceneTree</code> 的实例）。</p>
+<p>场景树的实例有两个比较重要的属性，<code>root</code> 和 <code>current_scene</code> 属性。这两个属性分别代表当前<strong>场景树的根节点</strong>和当前运行着的<strong>游戏场景的根节点</strong>。</p>
+<p><strong>值得注意是</strong>，场景树并不是当前运行着的游戏场景的所有节点组成的树。场景树不仅包含了当前运行中的游戏场景节点，也包含了游戏项目中被设置为<a target="_blank" rel="noopener" href="https://docs.godotengine.org/zh_CN/latest/getting_started/step_by_step/singletons_autoload.html">自动加载</a>的单例节点。因此如果我们在日志窗口中打印出场景树的结构，可以看到场景树根节点 root 的直接子节点中，包含着自动加载的节点和当前游戏场景根节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">┖╴root # 根节点</span><br><span class="line">   ┠╴Game # 自动加载的单例节点</span><br><span class="line">   ┠╴Util # 自动加载的单例节点</span><br><span class="line">   ┠╴DialogManager # 自动加载的单例节点</span><br><span class="line">   ┖╴Node # 当前游戏场景根节点</span><br><span class="line">      ┠╴ColorRect1</span><br><span class="line">      ┠╴ColorRect2</span><br></pre></td></tr></table></figure>
+<p>由于自动加载的节点在游戏运行启动时是优先加载的，因此可以看到自动加载的节点排在当前游戏场景根节点的前面。</p>
+<p>&nbsp;</p>
+<h2 id="root-节点"><a href="#root-节点" class="headerlink" title="root 节点"></a>root 节点</h2><p>场景树的根节点 root 是一个 <code>Viewport</code> 对象。由于 <code>Viewport</code> 类型是派生子 <code>Node</code> 类型的，因此在调试时可以通过 <code>Node</code> 类型的 <code>print_tree_pretty()</code> 方法来打印出当前场景树的结构。上面的场景树结构就是调用这个方法打印出来的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_tree().root.print_tree_pretty()</span><br></pre></td></tr></table></figure>
+<p>当然，Godot 编辑器也提供了更为直观的查看场景树中节点的方法。在游戏运行时，点击“场景”标签页下“远程”按钮，就可以看到当前场景树中的各个节点。</p>
+<img src="/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E5%9C%BA%E6%99%AF%E6%A0%91%E7%8A%B6%E6%80%81.png" class="" title="查看当前场景树状态">
+
+<p>上图中 root 节点下的前三个子节点都是我项目中“自动加载”（AutoLoad）的单例节点，第四个子节点是正在运行着的游戏场景的根节点。一般来说，游戏场景的加载晚于自动加载的节点的加载，因此当前游戏场景的根节点总是 root 节点的最后一个子节点。所以在官方示例代码中，有时候我们可以看到使用下面的代码来获取当前游戏场景的根节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var root &#x3D; get_tree().root</span><br><span class="line">var current_scene &#x3D; root.get_child(root.get_child_count() -1)</span><br><span class="line"></span><br><span class="line"># 也可以这么获取当前游戏场景的根节点</span><br><span class="line">get_tree().current_scene</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p>Viewport 在官方文档中被翻译为视口，即屏幕上的一块可视区域。场景树的根节点 root 是一个 <code>Viewport</code> 对象，游戏场景中的所有内容都是绘制在这上面的。可以利用 <code>Viewport</code> 提供的方法来实现游戏场景截图，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var img &#x3D; get_tree().root.get_texture().get_data()</span><br><span class="line">img.flip_y()</span><br><span class="line">img.save_png(path) # path 为截图保存的路径</span><br></pre></td></tr></table></figure>
+<p>比较有趣的是，调用 <code>get_texture()</code> 方法返回的是一个 <code>ViewportTexture</code> 对象。这个纹理对象上的内容与当前视口上呈现图像是同步的，这就意味着如果你把这个对象赋值给 <code>Sprite</code> 展示，那么就可以实现画中画的效果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var texture &#x3D; get_tree().root.get_texture()</span><br><span class="line">var sprite &#x3D; Sprite.new()</span><br><span class="line">sprite.texture &#x3D; texture</span><br></pre></td></tr></table></figure>
+<img src="/2019/06/02/Godot-%E5%9C%BA%E6%99%AF%E6%A0%91%E4%B8%8E%E8%8A%82%E7%82%B9/%E7%94%BB%E4%B8%AD%E7%94%BB%E6%95%88%E6%9E%9C.gif" class="" title="画中画效果">
+
+<p>&nbsp;</p>
+<h2 id="SceneTree-常用-API"><a href="#SceneTree-常用-API" class="headerlink" title="SceneTree 常用 API"></a>SceneTree 常用 API</h2><p>下面是一些 <code>SceneTree </code> 可能会比较频繁地用到的 API。</p>
+<p><code>root</code> 和 <code>current_scene</code> 属性。作用见上文。</p>
+<p><code>pause</code> 属性。<code>pause</code> 属性是布尔类型变量，使用它可以比较轻松地实现<a target="_blank" rel="noopener" href="https://docs.godotengine.org/zh_CN/latest/tutorials/misc/pausing_games.html">暂停游戏</a>的功能。当将 <code>SceneTree</code> 的 <code>pause</code> 属性设置为 <code>true</code> 时，场景将会暂停物理模拟、事件处理以及 <code>_process/_physics_process</code> 回调。结合暂停白名单节点，可以实现自由暂停和恢复游戏。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_tree().paused &#x3D; true</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p><code>call_group()</code> 与 <code>call_group_flags()</code> 方法。这两个方法可以签名如下，使用它们可以调用所有属于同一组的节点的特定方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Variant call_group( String group, String method, ... )</span><br><span class="line">Variant call_group_flags( int flags, String group, String method, ... )</span><br></pre></td></tr></table></figure>
+<p>从方法参数可以看出两个方法的差异在于 <code>flag</code> 参数。<code>flag</code> 参数说明了在调用特定方法时的行为，可以取如下的值。</p>
+<ul>
+<li><code>GROUP_CALL_DEFAULT = 0</code> 默认情况，空闲帧时调用方法</li>
+<li><code>GROUP_CALL_REVERSE = 1</code> 按节点出现的顺序的逆序依次调用方法</li>
+<li><code>GROUP_CALL_REALTIME = 2</code> 立即调用方法</li>
+<li><code>GROUP_CALL_UNIQUE = 4</code> 只调用依次方法，即使 call_group 执行了多次</li>
+</ul>
+<p>&nbsp;</p>
+<p>与上面这一对方法类似的还有 <code>notify_group()</code> / <code>notify_group_flags()</code>，<code>set_group()</code> / <code>set_group_flags()</code>。它们的作用分别是向组内节点发出通知和设置组内节点的属性值。其它与组相关的方法还有 <code>get_nodes_in_group()</code> / <code>has_group()</code>，分别用于获取组内节点和判断某个组是否存在。</p>
+<p>&nbsp;</p>
+<p>与场景相关的方法 <code>change_scene()</code>，<code>change_scene_to()</code>，<code>reload_current_scene()</code>。方法签名如下，前两者用于切换场景，第三个用于重置当前场景。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Error change_scene( String path )</span><br><span class="line">Error change_scene_to( PackedScene packed_scene )</span><br><span class="line">Errorreload_current_scene()</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p><code>quit()</code> 和 <code>set_quit_on_go_back()</code> 方法。调用前者可以直接退出游戏，设置后者为 <code>true</code> 会使 Android 用户点击 back 键时直接退出游戏。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void quit()</span><br><span class="line">void set_quit_on_go_back( bool enabled )</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p>信号：</p>
+<ul>
+<li><code>screen_resized</code> 屏幕尺寸变化时触发</li>
+<li><code>tree_changed</code> 场景树的结构变动时触发</li>
+<li><code>node_added/node_removed</code> 节点变动时触发</li>
+<li><code>idle_frame/physics_frame</code> <code>_process/_physics_process</code> 调用前触发</li>
+<li><code>files_dropped</code> 文件被拖放到游戏窗口上触发</li>
+</ul>
+<p>&nbsp;</p>
+<p>一个延迟到下一个空闲帧执行的小技巧（来自交流群群友）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yield(get_tree(), &#39;idle_frame&#39;)</span><br><span class="line"># your code</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<h2 id="Node-常用-API"><a href="#Node-常用-API" class="headerlink" title="Node 常用 API"></a>Node 常用 API</h2><p>在介绍节点常用的 API 之前有一点需要强调，即<strong>节点只有进入了场景树后才会被激活</strong>，未激活的节点将不具备节点的诸多功能。如下，我们用 <code>Timer</code> 节点实现一个 <code>set_timeout</code> 方法。只有将动态创建的 <code>Timer</code> 节点加入到了场景树中之后，<code>Timer</code> 节点才会在超时时发出 timeout 信号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func set_timeout(obj: Object, method: String, time: float) -&gt; void:</span><br><span class="line">	var timer :&#x3D; Timer.new()</span><br><span class="line">	timer.one_shot &#x3D; true</span><br><span class="line">	timer.autostart &#x3D; false</span><br><span class="line">	timer.wait_time &#x3D; time</span><br><span class="line">	</span><br><span class="line">	add_child(timer) # 需要将节点加入到场景树中，激活节点</span><br><span class="line">	timer.start()</span><br><span class="line">	</span><br><span class="line">	yield(timer, &#39;timeout&#39;)</span><br><span class="line">	obj.call(method)</span><br><span class="line">	timer.queue_free()</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p>当节点进入场景树时，它们将变为活动状态。它们可以访问他们需要处理的所有内容，获取输入，显示 2D 和 3D 视觉效果，接收和发送通知，播放声音等。当他们从场景树中删除时，他们将失去这些能力。</p>
+<p>Godot 中的大多数节点操作（例如绘制 2D，处理或获取通知）都按树顺序完成。这意味着树顺序中具有较低等级的父母和兄弟姐妹将在当前节点之前得到通知。存在继承关系时，父节点相关操作会先执行。</p>
+<p>&nbsp;</p>
+<p><code>name</code> 属性代表节点的名字。当我们调用 <code>print_tree_pretty()</code> 方法时，可以看到场景树中的各个节点都被打印出来了，且同一父元素的子节点的名字是各不相同的。一般情况下我们不需要设置节点的名字。不过如果节点是动态创建并加入到树中的时候，那么这个节点是匿名的，我们可以手动为其设置一个名字（不是必须的）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">add_child(Timer.new())</span><br><span class="line">get_tree().root.print_tree_pretty()</span><br><span class="line"></span><br><span class="line"># output</span><br><span class="line">... ...</span><br><span class="line"> ┠╴CanvasLayer</span><br><span class="line">       ┃  ┖╴Sprite</span><br><span class="line">       ┠╴Dialog</span><br><span class="line">       ┃  ┠╴Label</span><br><span class="line">       ┃  ┖╴AnimationPlayer</span><br><span class="line">       ┖╴@@2 # 没有名字的 Timer 节点</span><br></pre></td></tr></table></figure>
+<p>&nbsp;</p>
+<p><code>pause_mode</code> 属性规定了当节点所属的 <code>SceneTree</code> 的 <code>pause</code> 属性设置为 <code>true</code> 之后节点自身的行为。此值默认为 <code>PAUSE_MODE_INHERIT</code>，表示节点随场景树一起暂停。当此值为 <code>PAUSE_MODE_STOP</code> 时，表示无论什么情况，节点都暂停。当此值为 <code>PAUSE_MODE_PROCESS</code> 时，表示无论什么情况，节点都不暂停。</p>
+<p><code>_enter_tree()</code> / <code>_exit_tree()</code> / <code>_ready()</code> / <code>_process()</code> / <code>_input()</code>，生命周期内的各种方法，在合适的时候被调用。</p>
+<p>&nbsp;</p>
+<p>其它常用的节点处理方法如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 子节点处理方法</span><br><span class="line">void add_child( Node node, bool legible_unique_name&#x3D;false ) # 插入子节点</span><br><span class="line">Node get_child( int idx ) const # 获取指定索引子节点</span><br><span class="line">int get_child_count() const # 获取子节点数目</span><br><span class="line">Array get_children() const # 获取子节点列表</span><br><span class="line"></span><br><span class="line">Node get_parent() const # 获取父节点</span><br><span class="line">Node Pathget_path() const # 获取节点路径</span><br><span class="line">Node Pathget_path_to( Node node ) const # 获取节点相对路径</span><br><span class="line">Node get_node( NodePath path ) const # 根据路径查询节点</span><br><span class="line"></span><br><span class="line">SceneTree get_tree() const # 获取场景树</span><br><span class="line">Viewport get_viewport() const # 获取视口</span><br><span class="line"></span><br><span class="line">void move_child( Node child_node, int to_position ) # 删除子节点</span><br><span class="line">void queue_free() # 删除自己</span><br><span class="line"></span><br><span class="line">void print_tree_pretty() # 打印自己与子孙节点</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Godot/" rel="tag"># Godot</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/10/%E6%9D%A5%E7%94%BB%E4%B8%80%E4%B8%AA%E9%AD%94%E6%B3%95%E5%B8%88%E5%90%A7/" rel="prev" title="来画一个魔法师吧">
+      <i class="fa fa-chevron-left"></i> 来画一个魔法师吧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/15/Reigns-%E9%A3%8E%E6%A0%BC%E7%9F%A2%E9%87%8F%E5%9B%BE/" rel="next" title="Reigns 风格矢量图">
+      Reigns 风格矢量图 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#root-%E8%8A%82%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">root 节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SceneTree-%E5%B8%B8%E7%94%A8-API"><span class="nav-number">2.</span> <span class="nav-text">SceneTree 常用 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Node-%E5%B8%B8%E7%94%A8-API"><span class="nav-number">3.</span> <span class="nav-text">Node 常用 API</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

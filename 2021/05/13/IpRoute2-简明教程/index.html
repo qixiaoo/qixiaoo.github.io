@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="翻译自 Justin Ellingwood 的 How To Use IPRoute2 Tools to Manage Network Configuration on a Linux VPS  &amp;nbsp; 前言最近想学习一下 iproute2 的用法，Google 搜索后发现了这篇排名靠前的文章。本文是自己基于对原文理解的意译，如有问题，欢迎大家指出。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IpRoute2 简明教程">
+<meta property="og:url" content="http://yoursite.com/2021/05/13/IpRoute2-%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="翻译自 Justin Ellingwood 的 How To Use IPRoute2 Tools to Manage Network Configuration on a Linux VPS  &amp;nbsp; 前言最近想学习一下 iproute2 的用法，Google 搜索后发现了这篇排名靠前的文章。本文是自己基于对原文理解的意译，如有问题，欢迎大家指出。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-13T15:26:22.000Z">
+<meta property="article:modified_time" content="2021-05-13T15:45:59.985Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="iproute2">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/05/13/IpRoute2-%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>IpRoute2 简明教程 | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/13/IpRoute2-%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          IpRoute2 简明教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-13 23:26:22 / 修改时间：23:45:59" itemprop="dateCreated datePublished" datetime="2021-05-13T23:26:22+08:00">2021-05-13</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>翻译自 Justin Ellingwood 的 <a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/how-to-use-iproute2-tools-to-manage-network-configuration-on-a-linux-vps">How To Use IPRoute2 Tools to Manage Network Configuration on a Linux VPS</a></p>
+</blockquote>
+<p>&nbsp;</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近想学习一下 iproute2 的用法，Google 搜索后发现了这篇排名靠前的文章。本文是自己基于对原文理解的意译，如有问题，欢迎大家指出。</p>
+<a id="more"></a>
+
+<p>&nbsp;</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>在管理 Linux 服务器和排查网络问题时，熟悉一些基本的网络工具是很有帮助的。这些工具中的一部分最初是为了查看网络状态而编写的，但其中也包含了一些可以用来管理和配置网络连接的底层工具。</p>
+<p>一直以来，这些互不相关的网络工具被打包在一起发布，它们被统称为 <code>net-tools</code>。虽然 <code>net-tools</code> 工具包提供了相当完善的功能，但是包内工具的开发却是相互独立的，它们的使用方式也各不相同。</p>
+<p>由于 <code>net-tools</code> 包内工具的使用方式大相径庭，并且包内的部分工具也已经停止维护，因此使用名为 <code>iproute2</code> 的新工具包来替换原来 <code>net-tools</code>。<code>iproute2</code> 包内的各个工具被统一开发维护，并且他们之间的使用方式也非常相似。另外，这些工具也可以很好地互相配合一起使用。</p>
+<p>在本篇教程中，我们将会讨论如何使用 <code>iproute2</code> 来对你的网络进行配置、维护和信息查看。我们将会使用 Ubuntu 12.04 VPS 来进行演示，不过大多数其它现代 Linux 发行版都提供了相同的功能。</p>
+<p>虽然查询指令可以在非特权模式（非 root）下执行，不过在修改网络配置时，大多数情况下还是需要 root 权限的。</p>
+<p>&nbsp;</p>
+<h2 id="如何查看网络接口、地址、路由"><a href="#如何查看网络接口、地址、路由" class="headerlink" title="如何查看网络接口、地址、路由"></a>如何查看网络接口、地址、路由</h2><p><code>iproute2</code> 工具包最基础的功能就是管理本机的网络接口。</p>
+<p>一般来说，本机的网络接口通常会被命名成像是 <code>eth0</code>，<code>eth1</code>，<code>lo</code> 这样的名称。在过去，常常使用 <code>net-tools</code> 包提供的  <code>ifconfig</code> 命令来配置网络接口。而使用 <code>iproute2</code> 时，通常可以使用子命令 <code>ip addr</code> 和 <code>ip link</code> 来完成相同的功能。</p>
+<p>使用 <code>ifconfig</code> 时，你可以通过输入不带参数的如下命令来查看本机当前所有网络接口的状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">eth0      Link encap:Ethernet  HWaddr 54:be:f7:08:c2:1b  </span><br><span class="line">          inet addr:192.168.56.126  Bcast:192.168.56.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::56be:f7ff:fe08:c21b&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:114273 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:58866 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:73490903 (73.4 MB)  TX bytes:14294252 (14.2 MB)</span><br><span class="line">          Interrupt:20 Memory:f7f00000-f7f20000 </span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback  </span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1&#x2F;128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:3942 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:3942 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0 </span><br><span class="line">          RX bytes:668121 (668.1 KB)  TX bytes:668121 (668.1 KB)</span><br></pre></td></tr></table></figure>
+<p>如果想要查看某个特定网络接口的信息，你可以将网络接口名称作为参数传给 <code>ifconfig</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig eth0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">eth0      Link encap:Ethernet  HWaddr 54:be:f7:08:c2:1b  </span><br><span class="line">          inet addr:192.168.56.126  Bcast:192.168.56.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::56be:f7ff:fe08:c21b&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:114273 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:58866 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:73490903 (73.4 MB)  TX bytes:14294252 (14.2 MB)</span><br><span class="line">          Interrupt:20 Memory:f7f00000-f7f20000</span><br></pre></td></tr></table></figure>
+<p>使用 <code>iproute2</code> 包提供的子命令，我们可以实现相同的功能。</p>
+<p>如果想要查看每个网络接口被配置的地址，可以输入不带参数的 <code>ip addr</code> 命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </span><br><span class="line">    link&#x2F;loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1&#x2F;8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1&#x2F;128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 54:be:f7:08:c2:1b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.56.126&#x2F;24 brd 192.168.56.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::56be:f7ff:fe08:c21b&#x2F;64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>如果想要查看某个特定网络接口的地址信息，你可以使用如下格式的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr show eth0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 54:be:f7:08:c2:1b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.56.126&#x2F;24 brd 192.168.56.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::56be:f7ff:fe08:c21b&#x2F;64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>事实上，<code>ip addr</code> 只是 <code>ip addr show</code> 命令的别名。</p>
+<p>如果你只关心网络接口本身，而不在意它们被配置的地址，那么你可以使用 <code>ip link</code> 子命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </span><br><span class="line">    link&#x2F;loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 04:01:13:8a:a2:01 brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure>
+<p>如果想要查看某个特定网络接口的信息，那么你可以添加关键字 <code>show</code> 和对应网络接口的名字：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link show eth0</span><br></pre></td></tr></table></figure>
+<p>如果想要获得网络接口如何通信的统计数据，那么你可以给 <code>link</code> 子命令传入 <code>-s</code> 选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip -s link show eth0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 04:01:13:8a:a2:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    RX: bytes  packets  errors  dropped overrun mcast   </span><br><span class="line">    853144     14672    0       0       0       0      </span><br><span class="line">    TX: bytes  packets  errors  dropped carrier collsns </span><br><span class="line">    91257      537      0       0       0       0</span><br></pre></td></tr></table></figure>
+<p>那么我们如何找到我们的路由表呢？路由表包含了到达其他网络地址的路径信息，我们可以通过输入以下内容来打印当前的路由表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route show</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">default via 107.170.58.1 dev eth0  metric 100</span><br><span class="line">107.170.58.0&#x2F;24 dev eth0  proto kernel  scope link  src 107.170.58.162 </span><br></pre></td></tr></table></figure>
+<p>这条命令的输出内容告诉我们，通往更大互联网的默认路由是通过 <code>eth0</code> 接口到达地址为 <code>107.170.58.1</code> 的网关。通过 <code>eth0</code> 接口可以访问地址为 <code>107.170.58.1</code> 的网关，并且 <code>eth0</code> 接口自身的 ip 地址是 <code>107.170.58.162</code>。</p>
+<p>&nbsp;</p>
+<h2 id="如何配置网络接口和地址"><a href="#如何配置网络接口和地址" class="headerlink" title="如何配置网络接口和地址"></a>如何配置网络接口和地址</h2><p>既然你已经熟悉了如何获取网络接口信息和与它们关联的地址信息，那么下一步就应该是了解如何修改网络接口的状态了。</p>
+<p>首先需要了解如何配置接口本身。你仍然可以使用 <code>ip link</code> 子命令，不过这次你需要传入 <code>set</code> 而不是 <code>show</code> 来修改配置。</p>
+<p>例如，我们可以通过使用以下命令来打开或关闭网络接口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 up</span><br><span class="line">ip link <span class="built_in">set</span> eth1 down</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：当心不要意外关闭了你正连接的 VPS 的网络接口！</p>
+<p>你也可以使用 <code>ip link</code> 子命令来配置网络接口的属性。比如，如果你想打开或关闭网络接口的多播标志，你可以输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 multicast on</span><br><span class="line">ip link <span class="built_in">set</span> eth1 multicast off</span><br></pre></td></tr></table></figure>
+<p>你也可以输入如下的命令来修改 MTU 和分组队列的长度：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 mtu 1500</span><br><span class="line">ip link <span class="built_in">set</span> eth1 txqueuelen 1000</span><br></pre></td></tr></table></figure>
+<p>如果你正配置的网络接口是关闭（down）状态，那么你可以修改网络接口的名称和与之关联的 arp 标志：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 name eth10</span><br><span class="line">ip link <span class="built_in">set</span> eth1 arp on</span><br></pre></td></tr></table></figure>
+<p>如果要修改网络接口的地址，那么我们可以再次使用 <code>ip addr</code> 子命令。</p>
+<p>通过输入以下命令我们可以为网络接口添加一个地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr add IPADDRESS/NETPREFIX brd + dev INTERFACE</span><br></pre></td></tr></table></figure>
+<p>该命令的 <code>brd +</code> 部分会自动设置广播地址。每个网络接口都可以添加多个地址而不会出现任何问题。</p>
+<p>我们也可以执行相反的操作来删除网络地址。要删除指定网络接口的某个地址，可以使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr del IPADDRESS/NETPREFIX dev INTERFACE</span><br></pre></td></tr></table></figure>
+<p>你也可以省略输入地址，这样与该网络接口关联的第一个被列出的地址将被删除。</p>
+<p>通过使用 <code>ip route [add | change | replace | delete ]</code> 语法，你也可以删除路由规则。但我们不会在这里介绍，因为大多数人不会定期对此进行调整。</p>
+<p>&nbsp;</p>
+<h2 id="IpRoute2-的其他功能"><a href="#IpRoute2-的其他功能" class="headerlink" title="IpRoute2 的其他功能"></a>IpRoute2 的其他功能</h2><p>IPRoute2 还具有一些其他功能，不过我们将不会在本教程中进行深入讨论。相反，我们将讨论这些是什么，以及在什么情况下你可能会发现它们有用。</p>
+<p>IP 路由规则（rule）的概念很难谈论，因为它非常依赖于具体的情况。基本上，你可以基于多个字段（包括目标地址，源地址，路由协议，数据包大小等）来决定如何路由流量。</p>
+<p>我们使用 <code>ip rule</code> 子命令使用此功能。基本查询命令遵循和其他子命令一样的语法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip rule show</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0:  from all lookup <span class="built_in">local</span> </span><br><span class="line">32766:  from all lookup main </span><br><span class="line">32767:  from all lookup default</span><br></pre></td></tr></table></figure>
+<p>这三条路由规则是内核配置的默认规则。第一行可以匹配任何流量，用于路由高优先级的流量。第二行是处理常规路由的主要规则。最后一行是空规则，如果上面的规则与数据包不匹配，则使用该行进行后处理（post-processing）。</p>
+<p>由 IPRoute2 配置的路由规则被存储在路由策略数据库（routing policy database）中。通过与规则集合进行匹配来选择该数据库中的路由策略。我们可以使用适当的操作来添加或删除规则。但是，你不应该在不知道自己在做什么的情况下执行这些操作。</p>
+<p>可以通过 <code>man</code> 查看 <code>ip rule</code> 的手册来进行进一步的学习。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">man ip         <span class="comment"># search for &quot;ip rule&quot;</span></span><br></pre></td></tr></table></figure>
+<p>我们将简要讨论的另一件事是通过这些工具来处理 arp 信息。处理这些信息的子命令被称作 <code>ip neigh</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip neigh</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">107.170.58.1 dev eth0 lladdr 00:00:5e:00:01:68 DELAY</span><br></pre></td></tr></table></figure>
+<p>默认情况下，这里至少应列出你的网关。ARP（Address Resolution Protocol）是地址解析协议的缩写，它可以通过 IP 地址来获取 MAC 地址。</p>
+<p>基本上，每当需要转发 IP 分组时，你的主机就会在本地网络上广播 ARP 请求，向网络中的其他主机询问谁拥有这个 IP 地址。拥有这个 IP 地址的主机将把自己的 MAC 地址回复给询问者，然后询问者就知道该把 IP 分组发给谁了。询问者会把 IP 地址到 MAC 地址的映射缓存到本地（一般持续 15 分钟），这样后续的分组在需要转发时就不需要再次通过 ARP 请求询问了。</p>
+<p>&nbsp;</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>现在，你应该对如何使用 <code>iproute2</code> 包中的工具有了一个很好的了解了。</p>
+<p>尽管许多指南和教程仍然引用旧的 <code>net-tools</code> 工具包，部分原因是有经验的系统管理员过去经常使用旧的工具包，但本指南中讨论的命令将在未来几年内逐步替代 <code>net-tools</code> 工具。</p>
+<p>重要的是，现在你必须熟悉这些命令，然后才能在已切换到这些命令的系统上解决网络问题（Arch Linux 早在 2011 年就已经完全切换到了新工具）。新工具用法更加一致，你可以指望在所有命令中都可以使用类似的用法。你使用这些命令的次数越多，它们对你而言就越自然。</p>
+<p>By Justin Ellingwood.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/iproute2/" rel="tag"># iproute2</a>
+              <a href="/tags/Network/" rel="tag"># Network</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/07/2020-2021/" rel="prev" title="2020 -> 2021">
+      <i class="fa fa-chevron-left"></i> 2020 -> 2021
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E3%80%81%E5%9C%B0%E5%9D%80%E3%80%81%E8%B7%AF%E7%94%B1"><span class="nav-number">3.</span> <span class="nav-text">如何查看网络接口、地址、路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%9C%B0%E5%9D%80"><span class="nav-number">4.</span> <span class="nav-text">如何配置网络接口和地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IpRoute2-%E7%9A%84%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD"><span class="nav-number">5.</span> <span class="nav-text">IpRoute2 的其他功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

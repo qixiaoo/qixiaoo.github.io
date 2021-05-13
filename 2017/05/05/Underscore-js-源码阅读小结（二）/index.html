@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="源码版本 1.4.4  Array.prototype.reduce()ECMAScript 5 提供了两个归并数组的方法：reduce() 和 reduceRight()。这两个方法都会迭代数组的所有项，然后构建一个最终返回的值。其中，reduce() 方法从数组的第一项开始，逐个遍历到最后。而 reduceRight() 则从数组的最后一项开始，向前遍历到第一项。  arr.reduce(c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Underscore.js 源码阅读小结（二）">
+<meta property="og:url" content="http://yoursite.com/2017/05/05/Underscore-js-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%B0%8F%E7%BB%93%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="源码版本 1.4.4  Array.prototype.reduce()ECMAScript 5 提供了两个归并数组的方法：reduce() 和 reduceRight()。这两个方法都会迭代数组的所有项，然后构建一个最终返回的值。其中，reduce() 方法从数组的第一项开始，逐个遍历到最后。而 reduceRight() 则从数组的最后一项开始，向前遍历到第一项。  arr.reduce(c">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-05-05T09:33:47.000Z">
+<meta property="article:modified_time" content="2021-05-13T15:21:53.808Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="Underscore.js">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/05/05/Underscore-js-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%B0%8F%E7%BB%93%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Underscore.js 源码阅读小结（二） | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/05/Underscore-js-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%B0%8F%E7%BB%93%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Underscore.js 源码阅读小结（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-05-05 17:33:47" itemprop="dateCreated datePublished" datetime="2017-05-05T17:33:47+08:00">2017-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 23:21:53" itemprop="dateModified" datetime="2021-05-13T23:21:53+08:00">2021-05-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>源码版本 1.4.4</p>
+</blockquote>
+<h2 id="Array-prototype-reduce"><a href="#Array-prototype-reduce" class="headerlink" title="Array.prototype.reduce()"></a>Array.prototype.reduce()</h2><p>ECMAScript 5 提供了两个归并数组的方法：<code>reduce()</code> 和 <code>reduceRight()</code>。这两个方法都会迭代数组的所有项，然后构建一个最终返回的值。其中，reduce() 方法从数组的第一项开始，逐个遍历到最后。而 reduceRight() 则从数组的最后一项开始，向前遍历到第一项。 </p>
+<p><code>arr.reduce(callback,[initialValue])</code> 接收两个参数，第一个参数为一个回调函数，数组中的每个元素都会被传入此函数中迭代；第二个参数为一个可选的初始值，它的值会被作为回调函数的第一个参数传入。</p>
+<p>这里重点在于理解 reduce() 的第一个参数 <code>callback</code>，它是一个回调函数，这个回调函数接收四个参数：</p>
+<ul>
+<li>accumulator 上一次调用回调返回的值，或者是提供的初始值（initialValue）</li>
+<li>currentValue 数组中正在处理的元素</li>
+<li>currentIndex 数组中正在处理的元素索引，如果提供了 initialValue ，从0开始；否则从1开始</li>
+<li>array 调用 reduce 的数组</li>
+</ul>
+<a id="more"></a>
+
+<p>让我们通过下面数组求和的示例理解 reduce() 函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">acc, val</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> acc + val;</span><br><span class="line">&#125;, <span class="number">0</span>); <span class="comment">// 实际操作为 (0+0)+1)+2)+3</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(sum); <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+<p>执行上面的代码后，会在控制台输出6，即数组求和的结果。这里的执行流程是这样的：数组调用 reduce() 后，首先会把初始值0作为回调函数的第一个参数传入，然后取数组的第一个元素（即0）作为回调函数的第二个参数传入，再调用回调函数，会执行 <code>0+0</code> 得到结果0，回调函数最后返回这个结果。这样一次迭代就完成了，然后会开始第二次迭代。第二次迭代时，reduce() 会把前一次回调函数返回的结果（即0）作为此次迭代中回调函数的第一个参数，然后取数组的第二个元素（即1）作为回调函数的第二个参数，再调用回调函数，会执行 <code>0+1</code> 得到结果1，回调函数再返回这个结果。reduce() 函数会反复进行这个过程，直到数组中最后一个元素也被迭代处理，reduce() 最后返回累加的结果。</p>
+<p>因为 reduce() 函数的第二个参数是可选的，所以当我们未传入第二个参数时，reduce() 会把数组的第一个元素作为初始值传给回调函数，然后从数组的第二个元素开始迭代，直到数组的最后一个元素也被处理。示例代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sum = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].reduce(<span class="function"><span class="keyword">function</span>(<span class="params">acc, val</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> acc + val;</span><br><span class="line">&#125;); <span class="comment">// 未传入初始值，实际操作为 (0+1)+2)+3</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(sum); <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+<p>上面的代码就相当于把数组的第一项作为初始值，然后从数组的第二项开始迭代，最后返回迭代的结果。</p>
+<p>如果数组为空并且没有提供 initialValue， 会抛出 <code>TypeError</code>。如果数组仅有一个元素（无论位置如何）并且没有提供 initialValue， 或者有提供 initialValue 但是数组为空，那么此唯一值将被返回并且 callback 不会被执行。</p>
+<p><strong>注意</strong>，无论是 reduce() 还是 reduceRight() 函数都是属于数组的。因此，如果我们想要用 reduce() 迭代处理对象的所有属性的话，我们需要使用 Underscore.js 的 <code>_.reduce()</code> 函数。</p>
+<h2 id="reduce-list-iteratee-memo-context"><a href="#reduce-list-iteratee-memo-context" class="headerlink" title="_.reduce(list, iteratee, [memo], [context])"></a>_.reduce(list, iteratee, [memo], [context])</h2><p>Underscore.js 的 <code>reduce()</code> 函数的作用与前文中提到的原生的 reduce() 的作用相同。两者的不同之处在于 Underscore.js 提供的 reduce() 函数功能更强大，它还可以迭代处理对象的所有属性。</p>
+<p>list 是需要迭代的对象，可以是一个数组或对象；iteratee 是迭代函数；memo 是 reduce() 函数的初始值；context 是 iteratee 的 this 绑定的值。reduce() 的每一步都需要由 iteratee 返回。这个迭代传递4个参数：memo, value 和迭代的 index（或者 key）和最后一个引用的整个 list。</p>
+<p>下面 Underscore.js 中对这个方法的实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果数组为空并且没有提供 initialValue， 会抛出 TypeError</span></span><br><span class="line"><span class="keyword">var</span> reduceError = <span class="string">&#x27;Reduce of empty array with no initial value&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 迭代处理对象的成员并返还一个单一的值。 若 ECMAScript 5 原生支持reduce，</span></span><br><span class="line"><span class="comment">// 将调用原生的reduce函数。 此函数也有别名inject和foldl。</span></span><br><span class="line">_.reduce = _.foldl = _.inject = <span class="function"><span class="keyword">function</span> (<span class="params">obj, iterator, memo, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> initial = <span class="built_in">arguments</span>.length &gt; <span class="number">2</span>; <span class="comment">// 大于2说明传入了初始值memo</span></span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">null</span>) obj = [];</span><br><span class="line">    <span class="keyword">if</span> (nativeReduce &amp;&amp; obj.reduce === nativeReduce) &#123; <span class="comment">// 判断原生方法是否存在</span></span><br><span class="line">        <span class="keyword">if</span> (context) iterator = _.bind(iterator, context); <span class="comment">// iterator的this与context绑定</span></span><br><span class="line">        <span class="keyword">return</span> initial ? obj.reduce(iterator, memo) : obj.reduce(iterator); <span class="comment">// //调用原生的reduce</span></span><br><span class="line">    &#125;</span><br><span class="line">    each(obj, <span class="function"><span class="keyword">function</span> (<span class="params">value, index, list</span>) </span>&#123; <span class="comment">// 用已定义的each函数迭代处理obj的每个元素</span></span><br><span class="line">        <span class="keyword">if</span> (!initial) &#123; <span class="comment">// 若未提供初始值memo，则第一次迭代时会进入内部</span></span><br><span class="line">            memo = value; <span class="comment">// 若未传入初始值，把obj的第一项作为初始值</span></span><br><span class="line">            initial = <span class="literal">true</span>; <span class="comment">// 修改initial的值，确保each的下一次迭代不会再进入此if语句内</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 用memo保存每次迭代的结果，并作为下一次的初始值传入iterator</span></span><br><span class="line">            memo = iterator.call(context, memo, value, index, list);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">if</span> (!initial) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(reduceError); <span class="comment">// 上面提到的异常情况</span></span><br><span class="line">    <span class="keyword">return</span> memo;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这个 reduce() 函数的实现还是挺简单的。若存在原生的方法，则调用原生的 redece()。否则就用 <code>_.each()</code> 函数迭代 <code>obj</code> 的每一项元素，并用 <code>memo</code> 保存每次迭代的结果，再进行下一次迭代处理。</p>
+<h2 id="some-list-predicate-context-与-find-list-predicate-context"><a href="#some-list-predicate-context-与-find-list-predicate-context" class="headerlink" title="_.some(list, [predicate], [context])与_.find(list, predicate, [context])"></a>_.some(list, [predicate], [context])与_.find(list, predicate, [context])</h2><p><code>_.some()</code> 函数的作用是判断 <code>list</code> 内是否存在元素满足 <code>predicate</code> 的检测。其中，<code>list</code> 可以是一个数组或者对象，<code>predicate</code> 是一个回调函数。回调函数要求返回 true 或 false 来表示当前元素是否满足检测。<code>_.find()</code> 的功能与 <code>_.some()</code> 相似，不过它是返回满足 <code>predicate</code> 检测的第一个元素。</p>
+<p><strong>注意</strong>，这两个函数都是在找到第一个满足条件的元素后就立即停止对 <code>list</code> 的遍历。</p>
+<p>下面让我们来看一看源码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Underscore.js 中默认的迭代器</span></span><br><span class="line">_.identity = <span class="function"><span class="keyword">function</span> (<span class="params">value</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> any = _.some = _.any = <span class="function"><span class="keyword">function</span> (<span class="params">obj, iterator, context</span>) </span>&#123;</span><br><span class="line">    iterator || (iterator = _.identity); <span class="comment">// 若未提供检测函数，则使用默认的identity</span></span><br><span class="line">    <span class="keyword">var</span> result = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">null</span>) <span class="keyword">return</span> result;</span><br><span class="line">    <span class="keyword">if</span> (nativeSome &amp;&amp; obj.some === nativeSome) <span class="keyword">return</span> obj.some(iterator, context); <span class="comment">// 优先使用原生的方法</span></span><br><span class="line">    each(obj, <span class="function"><span class="keyword">function</span> (<span class="params">value, index, list</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (result || (result = iterator.call(context, value, index, list))) </span><br><span class="line">            <span class="keyword">return</span> breaker; <span class="comment">// 找到满足条件的元素后就中断遍历</span></span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> !!result; <span class="comment">// 确保返回的是布尔型元素</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">_.find = _.detect = <span class="function"><span class="keyword">function</span> (<span class="params">obj, iterator, context</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> result;</span><br><span class="line">    any(obj, <span class="function"><span class="keyword">function</span> (<span class="params">value, index, list</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (iterator.call(context, value, index, list)) &#123;</span><br><span class="line">            result = value; <span class="comment">// 保存找到的第一个满足条件的元素</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>上面的源码里有两个需要我们注意的地方。</p>
+<p>第一个是在第13行中匿名函数的内部，当我们找到了一个满足条件的元素后，匿名函数返回了一个 <code>breaker</code>。这个我们在上一篇文章讲 <code>_.each()</code> 函数的时候提到了，返回 <code>breaker</code> 是为了终止 <code>_.each()</code> 函数的执行，即停止遍历元素。</p>
+<p>另外一个是在第15行中使用了一个 <code>!!result</code>。我们知道对一个布尔型变量进行两次取反后，它的值是不变的。这里之所以要对 result 两次取反，是为了确保返回的是布尔型元素。从第 7 行可以看出，如果我们没有提供检测函数，那么 <code>_.some()</code> 就会使用默认的 <code>_.identity</code>。然而 <code>_.identity</code> 是不会对元素进行处理的，它会直接返回当前遍历到的元素。因此我们使用两次取反来对元素进行类型转化，让元素变成布尔型变量。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Underscore-js/" rel="tag"># Underscore.js</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/04/29/Underscore.js%20%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E5%B0%8F%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="Underscore.js 源码阅读小结（一）">
+      <i class="fa fa-chevron-left"></i> Underscore.js 源码阅读小结（一）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/05/30/%E5%9C%A8%E7%AB%AF%E5%8D%88%E6%95%B2%E4%BA%86%E4%B8%80%E5%A4%A9%E4%BB%A3%E7%A0%81%E7%9A%84%E6%88%91%E5%B0%B1%E6%98%AF%E4%B8%AASB/" rel="next" title="在端午敲了一天代码的我就是个SB">
+      在端午敲了一天代码的我就是个SB <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Array-prototype-reduce"><span class="nav-number">1.</span> <span class="nav-text">Array.prototype.reduce()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce-list-iteratee-memo-context"><span class="nav-number">2.</span> <span class="nav-text">_.reduce(list, iteratee, [memo], [context])</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#some-list-predicate-context-%E4%B8%8E-find-list-predicate-context"><span class="nav-number">3.</span> <span class="nav-text">_.some(list, [predicate], [context])与_.find(list, predicate, [context])</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
