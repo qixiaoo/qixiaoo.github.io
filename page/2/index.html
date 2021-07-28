@@ -146,6 +146,138 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9B%BE/" class="post-title-link" itemprop="url">数据结构入门——图</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-05 23:40:20" itemprop="dateCreated datePublished" datetime="2018-08-05T23:40:20+08:00">2018-08-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 23:21:53" itemprop="dateModified" datetime="2021-05-13T23:21:53+08:00">2021-05-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>本文翻译自 <a target="_blank" rel="noopener" href="https://adrianmejia.com/categories/Programming/Data-Structures-and-Algorithms-DSA/">Data Structures and Algorithms (DSA)</a>  的系列文章有关图的章节，Google 翻译真好用。</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>在本篇文章中，我们将会探索非线性的数据结构——图，我们将会涉及到图的核心概念以及典型应用。</p>
+<p>你可能现在就在使用那些用到了图和树这些数据结构的程序。比方说，你想要知道家和公司之间的最短距离，那么你就可以使用图算法来计算出答案。我们将会在后面探索这个以及一些其它有趣的挑战。</p>
+<p>下面是我们将会在本文中介绍的一些操作：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>邻接表</th>
+<th>邻接矩阵</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Space</td>
+<td><em>O(V + E)</em></td>
+<td><em>O(V^2)</em></td>
+</tr>
+<tr>
+<td><strong>add</strong>Vertex</td>
+<td><em>O(1)</em></td>
+<td><em>O(V^2)</em></td>
+</tr>
+<tr>
+<td><strong>remove</strong>Vertex</td>
+<td><em>O(V + E)</em></td>
+<td><em>O(V^2)</em></td>
+</tr>
+<tr>
+<td><strong>add</strong>Edge</td>
+<td><em>O(1)</em></td>
+<td><em>O(1)</em></td>
+</tr>
+<tr>
+<td><strong>remove</strong>Edge (using Array)</td>
+<td><em>O(E)</em></td>
+<td><em>O(1)</em></td>
+</tr>
+<tr>
+<td><strong>remove</strong>Edge (using HashSet)</td>
+<td><em>O(1)</em></td>
+<td><em>O(1)</em></td>
+</tr>
+<tr>
+<td><strong>get</strong>Adjacents</td>
+<td><em>O(E)</em></td>
+<td><em>O(V)</em></td>
+</tr>
+<tr>
+<td><strong>is</strong>Adjacent (using Array)</td>
+<td><em>O(E)</em></td>
+<td><em>O(1)</em></td>
+</tr>
+<tr>
+<td><strong>is</strong>Adjacent (using HashSet)</td>
+<td><em>O(1)</em></td>
+<td><em>O(1)</em></td>
+</tr>
+</tbody></table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/08/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9B%BE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/05/%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E4%BD%BF%E7%94%A8SVG/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -727,13 +859,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
