@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="起因最近国内 APP 需要备案的新闻火了一阵子，再加上我的 XiaoMi Note 3 存储空间越用越少，不知道到底是被谁占用了，于是想着干脆刷一下机。  免责声明：我本人也是小白一个，这是我第一次刷机，以下内容均是从网上现学现用，刷机有风险，诸君请谨慎。  参考教程和文章：  MIUI11 国际版刷机教程（小米 Note 3 为例） 官方文档：小米 Note 3 安装 TWRP 官方文档：Ins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xiaomi Mi Note 3 刷入 Android 13">
+<meta property="og:url" content="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="起因最近国内 APP 需要备案的新闻火了一阵子，再加上我的 XiaoMi Note 3 存储空间越用越少，不知道到底是被谁占用了，于是想着干脆刷一下机。  免责声明：我本人也是小白一个，这是我第一次刷机，以下内容均是从网上现学现用，刷机有风险，诸君请谨慎。  参考教程和文章：  MIUI11 国际版刷机教程（小米 Note 3 为例） 官方文档：小米 Note 3 安装 TWRP 官方文档：Ins">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/Android-Studio-Platform-Tools.png">
+<meta property="og:image" content="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/Android-13-LineageOS.png">
+<meta property="article:published_time" content="2023-08-26T13:08:15.000Z">
+<meta property="article:modified_time" content="2023-08-27T06:20:05.047Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="刷机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/Android-Studio-Platform-Tools.png">
+
+<link rel="canonical" href="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Xiaomi Mi Note 3 刷入 Android 13 | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Xiaomi Mi Note 3 刷入 Android 13
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-26 21:08:15" itemprop="dateCreated datePublished" datetime="2023-08-26T21:08:15+08:00">2023-08-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-27 14:20:05" itemprop="dateModified" datetime="2023-08-27T14:20:05+08:00">2023-08-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近国内 APP 需要备案的新闻火了一阵子，再加上我的 XiaoMi Note 3 存储空间越用越少，不知道到底是被谁占用了，于是想着干脆刷一下机。</p>
+<blockquote>
+<p>免责声明：我本人也是小白一个，这是我第一次刷机，以下内容均是从网上现学现用，刷机有风险，诸君请谨慎。</p>
+</blockquote>
+<p>参考教程和文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/86160027">MIUI11 国际版刷机教程（小米 Note 3 为例）</a></li>
+<li><a target="_blank" rel="noopener" href="https://twrp.me/xiaomi/xiaomiminote3.html">官方文档：小米 Note 3 安装 TWRP</a></li>
+<li><a target="_blank" rel="noopener" href="https://wiki.lineageos.org/devices/jason/install">官方文档：Install LineageOS on<br>Xiaomi Mi Note 3</a> （本文基于 LineageOS 18.1，但还是可以作为参考）</li>
+</ul>
+<span id="more"></span>
+
+<p>&nbsp;</p>
+<h2 id="环境和工具"><a href="#环境和工具" class="headerlink" title="环境和工具"></a>环境和工具</h2><p>相关工具</p>
+<ul>
+<li>电脑一台（需要电脑有 USB 2.0 接口，否则需要拓展坞转成 USB 2.0）</li>
+<li>小米解锁工具包 - miflash_unlock （Windows）</li>
+<li>Xiaomi Mi Note 3 一台 (code name: jason)</li>
+<li>Android platform-tools （Windows 或 Linux 均可，我是双系统，用的是 Linux 下 Android Studio 默认安装的自带版本）</li>
+<li>TWRP (twrp-3.7.0_9-0-jason.img)</li>
+<li>LineageOS 20.0 ROM</li>
+<li>GApps 谷歌套件（NikGapps）</li>
+</ul>
+<p>&nbsp;</p>
+<h2 id="解锁小米手机"><a href="#解锁小米手机" class="headerlink" title="解锁小米手机"></a>解锁小米手机</h2><p>首先小米 Note 3 刷机之前需要先解锁，这个需要打开开发者模式之后向官方申请，一般七天后申请通过了才可以使用小米解锁工具包来解锁。具体的解锁步骤建议网上搜索，我参考了这篇文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/86160027">MIUI11 国际版刷机教程（小米 Note 3 为例）</a>。</p>
+<p>在这里我遇到了第一个坑，官方的解锁工具包一直检测不到我的手机，即使我已经通过 USB 连接手机了。我在这里卡住了好一阵，最后在论坛的<a target="_blank" rel="noopener" href="https://web.vip.miui.com/page/info/mio/mio/detail?postId=4378807&app_version=dev.20051">常见问题</a>的评论区里找到了解法:</p>
+<ol>
+<li>在开发者选项里，把 USB 连接默认设置为传输文件（否则插上 USB 后是仅充电）</li>
+<li>点击小米解锁工具软件右上角的齿轮，安装驱动</li>
+<li>更换 USB 3.0 接口为拓展坞提供的 USB  2.0 接口</li>
+</ol>
+<p>这里需要 USB 2.0 接口个人感觉十分恶心，我的电脑根本没有 USB 2.0 的接口，好在疫情期间买了 USB 转接头，试了一下发现居然有用，非常幸运。</p>
+<blockquote>
+<p>补充说明：后面凡是需要连接数据线，或者使用 platform-tools 的地方，都默认是上面提到的转接后的 USB 2.0 接口。</p>
+</blockquote>
+<blockquote>
+<p>补充说明：如果上面都试过了没生效的话，推荐大家翻一下<a target="_blank" rel="noopener" href="https://web.vip.miui.com/page/info/mio/mio/detail?postId=4378807&app_version=dev.20051">常见问题</a>的评论区，说不定可以找到自己遇到的问题的解法。比如评论区有人换了官方提供的数据线才解锁成功……</p>
+</blockquote>
+<p>&nbsp;</p>
+<h2 id="刷入-TWRP"><a href="#刷入-TWRP" class="headerlink" title="刷入 TWRP"></a>刷入 TWRP</h2><p>我之前完全没有接触过 TWRP，因此几乎是完全按着 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/86160027">MIUI11 国际版刷机教程（小米 Note 3 为例）</a> 教程里方式操作。唯一不同的是原作者使用的是 Windows 下的 platform-tools 工具，我是使用的 Linux 下的 platform-tools 工具。</p>
+<p>在 Linux 下，使用 JetBrains Toolbox 安装好 Android Studio 后，默认会帮忙安装 platform-tools。我的是在 <code>~/Android/Sdk/platforms</code> 目录下面。由于 Android Studio 本身比较大，安装过程中需要考验各位通过科学方式上网的能力，因此不建议没有 Android 开发需求伙伴们通过这种方式安装。</p>
+<img src="/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/Android-Studio-Platform-Tools.png" class="" title="Android-Studio-Platform-Tools.png">
+
+<p>TWRP 官方为小米 Note 3 如何安装 TWRP 撰写了<a target="_blank" rel="noopener" href="https://twrp.me/xiaomi/xiaomiminote3.html">教程</a>，官方教程里提供了两种安装方式，这里我们使用后者，即通过 platform-tools 来安装。我使用的 TWRP 版本是 <a target="_blank" rel="noopener" href="https://dl.twrp.me/jason/">3.7.0_9-0-jason</a>。</p>
+<p>在这里我遇到了第二个坑。在执行 <code>flashboot flash recovery twrp.img</code> 后，我发现我的控制台没有任何输出 —— 既没有报错，也没有结果，光标一直原地闪烁。折腾了好久才发现居然还是 USB 接口的问题，我前面解锁成功后就把拓展坞拔了，最后还是老老实实换了回来，然后才 OK 了。</p>
+<p>&nbsp;</p>
+<h2 id="下载并刷入-LineageOS-20-0"><a href="#下载并刷入-LineageOS-20-0" class="headerlink" title="下载并刷入 LineageOS 20.0"></a>下载并刷入 LineageOS 20.0</h2><p>一开始我是打算刷入<a target="_blank" rel="noopener" href="https://xiaomi.eu/community/forums/miui-rom-releases.103/">欧版 MIUI</a>，后来发现小米发布的新版 MIUI 已经不支持 Note 3 了。再后面看到基于 Android 11 的 LineageOS 18.1 官方支持 Note 3，于是果断刷入了 LineageOS 18.1。</p>
+<blockquote>
+<p>补充说明：欧版 MIUI 论坛禁止了大陆 IP 访问，如果有需要的话，各位需要通过意念上网的方式下载欧版 MIUI ROM。</p>
+</blockquote>
+<p>值得一提是，LineageOS 的最新版 —— 20.0，官方也删除了对 Note 3 的支持。这意味着如果想要使用基于 Android 13 的 LineageOS 20.0 的话，我们需要下载非官方的 ROM。xda 论坛有位大佬用阿里云盘发布了 LineageeOS 20.0 的 ROM，需要的话可以前往<a target="_blank" rel="noopener" href="https://forum.xda-developers.com/t/rom-13-unofficial-lineageos-20-for-xiaomi-mi-note-3.4620619/#post-88923773">这篇文章</a>进行下载。</p>
+<p>另外，LineageOS 默认不包含 GApps 套件，如果希望使用 Google 服务的话需要单独下载 <a target="_blank" rel="noopener" href="https://nikgapps.com/">GApps</a>。注意不要下错版本，LineageOS 20.0 系统对应的应该是 Android 13 版本的 GApps。此外，Note 3 应该使用 ARM64 架构的 GApps。我用的是<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/nikgapps/files/Releases/NikGapps-T/16-Jul-2023/NikGapps-core-arm64-13-20230716-signed.zip/download">这个版本</a>。</p>
+<p>准备好 LineageOS 20.0 ROM 和 Android 13 ARM64 版本的 GApps 后就可以开始刷入系统了。</p>
+<p>刷入 ROM 的具体步骤可以参考官方文档 <a target="_blank" rel="noopener" href="https://wiki.lineageos.org/devices/jason/install">Install LineageOS on<br>Xiaomi Mi Note 3</a> 。由于我们 TWRP 已经装好了，并且也下好了系统 ROM，我们可以直接跳到 <a target="_blank" rel="noopener" href="https://wiki.lineageos.org/devices/jason/install#installing-lineageos-from-recovery">Installing LineageOS from recovery</a> 这一章节，然后按照这一章节的步骤一步一步来操作就可以了。不过按照官方给的步骤操作我也遇到了一点额外的问题。</p>
+<p>在使用 adb 时我遇到了 <code>insufficient permissions for device</code> 的报错，参考 StackOverflow 的<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/34807285/22415096">这篇回答</a>，重启 adb 后解决了。</p>
+<p>期间我也遇到了权限相关的报错，比如 <code>no permissions fastboot</code>。后来在 <code>flashboot</code> 前面加上 <code>sudo</code> 来执行就 OK 了。</p>
+<p>&nbsp;</p>
+<h2 id="ROM-刷入完成后"><a href="#ROM-刷入完成后" class="headerlink" title="ROM 刷入完成后"></a>ROM 刷入完成后</h2><p>按照上面官方给出的步骤，使用 <code>sudo adb sideload ...</code> 刷入 ROM 和 GApps 套件后就可以重启手机进入系统了。</p>
+<p>这里值得一提的是，初次进入 LineageOS 20.0 会需要大概 15 分钟左右的时间在首屏加载。我第一次刷入时还以为是失败卡死了，重新又刷了一遍，平白浪费了很多时间。诸位耐心等待即可。</p>
+<p>&nbsp;</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>上面的教程我们是使用 TWRP 来刷入 LineageOS ROM。实际上，LineageOS 官方也提供了自己的类似的 Recovery 工具。</p>
+<p>我在刷入 LineageOS 20.0 之前还刷入了 LineageOS 19.1，之后发现进入不了 TWRP 了。尝试按住音量上键和电源键只能进入 TWRP 首屏的图片，然后就没有响应卡死了。</p>
+<p>为了刷入 LineageOS 20.0 我尝试重新刷入了 TWRP，然而还是卡死进不去。后来尝试了刷入官方版本的 Recovery 工具（同样来自 xda 大佬的<a target="_blank" rel="noopener" href="https://down.warbler.cc/">云盘</a>），双清后重新刷入了 TWRP 才解决问题。</p>
+<p>顺带一提，LineageOS 官方提供的 Recovery 工具没有 TWRP 好用……</p>
+<p>&nbsp;</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>随着 Android 系统版本的迭代，已经有越来越多的 APP 不再支持老版本的 Android 平台了。我手里其实还有一台 Android 4.4 的老古董，虽然还没坏，但实际上已经几乎没有什么软件可以用了。</p>
+<p>目前小米 Note 3 也已经是 6 年前的手机了，在刷机过程中我逐渐意识到这款手机正在被小米官方和主流社区所遗忘。所以如果诸位还不打算换手机，并且打算继续使用小米 Note 3 的话，那么最好尽量早早刷机升级到 Android 的新版本。</p>
+<p>最后附上一张成果图。</p>
+<img src="/2023/08/26/Xiaomi-Mi-Note-3-%E5%88%B7%E5%85%A5-Android-13/Android-13-LineageOS.png" class="" title="Android-13-LineageOS.png">
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/%E5%88%B7%E6%9C%BA/" rel="tag"># 刷机</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/28/%E4%BD%BF%E7%94%A8-Inkscape-Synfig-%E5%88%B6%E4%BD%9C%E5%8A%A8%E5%9B%BE/" rel="prev" title="使用 Inkscape + Synfig 制作动图">
+      <i class="fa fa-chevron-left"></i> 使用 Inkscape + Synfig 制作动图
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%B7%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%92%8C%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">环境和工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%94%81%E5%B0%8F%E7%B1%B3%E6%89%8B%E6%9C%BA"><span class="nav-number">3.</span> <span class="nav-text">解锁小米手机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B7%E5%85%A5-TWRP"><span class="nav-number">4.</span> <span class="nav-text">刷入 TWRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E5%88%B7%E5%85%A5-LineageOS-20-0"><span class="nav-number">5.</span> <span class="nav-text">下载并刷入 LineageOS 20.0</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ROM-%E5%88%B7%E5%85%A5%E5%AE%8C%E6%88%90%E5%90%8E"><span class="nav-number">6.</span> <span class="nav-text">ROM 刷入完成后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">7.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E"><span class="nav-number">8.</span> <span class="nav-text">最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

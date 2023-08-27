@@ -201,13 +201,14 @@
       
         <p>好久没有写博客了，上一篇文章居然还是暑假的时候……</p>
 <p>为了避免博客被荒废掉，并且在这学期勉励自己，特地在此发出本学期的第一篇文章。今天我们来说一下在网页中使用 SVG。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p>SVG 的全称是“可缩放矢量图形”，而所谓的矢量图形简言之就是可以任意放大和缩小的图形。而我们平时使用手机拍照得到的和电脑上常常操作的以 <code>.jpg</code>、<code>.png</code>，<code>.gif</code> 为后缀的图片则统统是“位图”，位图是由一个一个的像素所组成的图形。如果在平时你有放大过位图的经历的话，你会发现当图片放大到一定程度后就会变得十分模糊，而 SVG 图片是可以无限放大而不失真的。SVG 图片以 <code>.svg</code> 为后缀。</p>
 <h2 id="了解-SVG"><a href="#了解-SVG" class="headerlink" title="了解 SVG"></a>了解 SVG</h2><p>为了在网页中使用 SVG 图片，我们首先需要了解基本的 SVG 图片是什么样的。我们先来看看怎样创建一张 SVG 图片。</p>
 <p>首先你需要在桌面新建一个文本文档，然后在文档内容中贴入下面的代码，然后保存，最后将文本文档的后缀名需改为 <code>.svg</code> 即可。这样我们就成功绘制了一张矢量图啦！</p>
 <p>代码内容如下：</p>
 <figure class="highlight svg"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.w3.org/2000/svg&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xlink</span>=<span class="string">&quot;http://www.w3.org/1999/xlink&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">circle</span> <span class="attr">cx</span>=<span class="string">&quot;40&quot;</span> <span class="attr">cy</span>=<span class="string">&quot;40&quot;</span> <span class="attr">r</span>=<span class="string">&quot;24&quot;</span> <span class="attr">style</span>=<span class="string">&quot;stroke:#006600; fill:#00cc00&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>创建后如果我们要查看这张矢量图长什么样的话，我们可以直接使用浏览器打开这个文件。在浏览器中我们可以看到图像是这样的：</p>
 <img src="/2018/03/05/%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E4%BD%BF%E7%94%A8SVG/circle.png" class="" title="一个使用 SVG 绘制的圆">
 
@@ -223,6 +224,7 @@
 <h2 id="基本的使用"><a href="#基本的使用" class="headerlink" title="基本的使用"></a>基本的使用</h2><p>在对 SVG 有了大概的了解之后，我们就可以尝试在网页中使用 SVG 图片了。我们至少有两种方式使用 SVG 图片。</p>
 <p>其一是使用 <code>&lt;image&gt;</code> 标签，并将其 <code>src</code> 属性置为 SVG 图片的路径；其二则是直接将代表图片的 SVG 标签放在网页中。如下所示：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 方法一 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;/svg/circle-element-1.svg&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 方法二 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">circle</span> <span class="attr">cx</span>=<span class="string">&quot;40&quot;</span> <span class="attr">cy</span>=<span class="string">&quot;40&quot;</span> <span class="attr">r</span>=<span class="string">&quot;24&quot;</span> <span class="attr">style</span>=<span class="string">&quot;stroke:#006600; fill:#00cc00&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>平常我们使用时，可以到网上去下载我们需要的资源。另外，我们也可以使用软件 AI 或者 Inkscape 自己动手绘制。</p>
 <h2 id="SVG-动画"><a href="#SVG-动画" class="headerlink" title="SVG 动画"></a>SVG 动画</h2><p>个人学习 SVG 以来，感觉最有趣的部分就是 SVG 动画了。当然，这也是最难的一部分。</p>
 <p>SVG 规范中提供了一系列标签来为 SVG 图形添加动画，包含 <code>&lt;set&gt;</code>、<code>&lt;animate&gt;</code>、<code>&lt;animateColor&gt;</code>、<code>&lt;animateTransform&gt;</code> 和 <code>&lt;animateMotion&gt;</code>。讲道理，要彻底弄清楚这些标签的各个属性还是很难的（至少我还没记住），学习的时候可以看看 <a target="_blank" rel="noopener" href="http://www.zhangxinxu.com/wordpress/">张鑫旭大神的博客</a>。</p>
@@ -336,13 +338,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -369,7 +371,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -146,6 +146,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/10/%E6%9D%A5%E7%94%BB%E4%B8%80%E4%B8%AA%E9%AD%94%E6%B3%95%E5%B8%88%E5%90%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/10/%E6%9D%A5%E7%94%BB%E4%B8%80%E4%B8%AA%E9%AD%94%E6%B3%95%E5%B8%88%E5%90%A7/" class="post-title-link" itemprop="url">来画一个魔法师吧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-10 15:35:41" itemprop="dateCreated datePublished" datetime="2018-11-10T15:35:41+08:00">2018-11-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 23:21:53" itemprop="dateModified" datetime="2021-05-13T23:21:53+08:00">2021-05-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>时间总是在不经意间告诉我们生活的真谛，比如说不要随便立 Flag……</p>
+<p>回头一看，上一篇文章又是暑假的时候了。鸽了这么久，原因主要还是不知道写些什么。不过最近我在学习用 Inkscape 画矢量图，临摹了<a target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCX4mqbvv5lGqLpI4FYlJt4w/videos">大佬</a>的几幅作品之后，感觉还是挺好玩的。于是今天决定出一个用 Inkscape 画魔法师的教程，这也算是前面<a target="_blank" rel="noopener" href="https://bubble-q.github.io/2018/03/05/%E5%9C%A8%E7%BD%91%E9%A1%B5%E4%B8%AD%E4%BD%BF%E7%94%A8SVG/">文章</a>的后续吧。</p>
+<img src="/2018/11/10/%E6%9D%A5%E7%94%BB%E4%B8%80%E4%B8%AA%E9%AD%94%E6%B3%95%E5%B8%88%E5%90%A7/wizard.svg" class="" title="魔法师.svg">
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/11/10/%E6%9D%A5%E7%94%BB%E4%B8%80%E4%B8%AA%E9%AD%94%E6%B3%95%E5%B8%88%E5%90%A7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%85%A5%E9%97%A8%E2%80%94%E2%80%94%E5%9B%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -694,6 +768,7 @@
 <p>源码版本 1.4.4</p>
 </blockquote>
 <h2 id="创建-Underscore-对象的引用"><a href="#创建-Underscore-对象的引用" class="headerlink" title="创建 Underscore 对象的引用"></a>创建 Underscore 对象的引用</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _ = <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> _) <span class="keyword">return</span> obj;</span><br><span class="line">    <span class="keyword">if</span> (!(<span class="built_in">this</span> <span class="keyword">instanceof</span> _)) <span class="keyword">return</span> <span class="keyword">new</span> _(obj);</span><br><span class="line">    <span class="built_in">this</span>._wrapped = obj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
 <p>上面的代码创建了 undersore 的引用，然而我对执行顺序却理得不是很清楚，尤其是上面的第三行，于是我尝试在 chrome 中 debug 了一下。不过在理解之前我们先复习一下使用 <code>new</code> 调用构造函数的具体流程，以及 <code>instanceof</code> 操作符的用法。</p>
           <!--noindex-->
             <div class="post-button">
@@ -859,13 +934,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -892,7 +967,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

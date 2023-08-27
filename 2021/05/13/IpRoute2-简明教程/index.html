@@ -196,7 +196,7 @@
 </blockquote>
 <p>&nbsp;</p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近想学习一下 iproute2 的用法，Google 搜索后发现了这篇排名靠前的文章。本文是自己基于对原文理解的意译，如有问题，欢迎大家指出。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p>&nbsp;</p>
 <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>在管理 Linux 服务器和排查网络问题时，熟悉一些基本的网络工具是很有帮助的。这些工具中的一部分最初是为了查看网络状态而编写的，但其中也包含了一些可以用来管理和配置网络连接的底层工具。</p>
@@ -209,48 +209,69 @@
 <p>一般来说，本机的网络接口通常会被命名成像是 <code>eth0</code>，<code>eth1</code>，<code>lo</code> 这样的名称。在过去，常常使用 <code>net-tools</code> 包提供的  <code>ifconfig</code> 命令来配置网络接口。而使用 <code>iproute2</code> 时，通常可以使用子命令 <code>ip addr</code> 和 <code>ip link</code> 来完成相同的功能。</p>
 <p>使用 <code>ifconfig</code> 时，你可以通过输入不带参数的如下命令来查看本机当前所有网络接口的状态：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">eth0      Link encap:Ethernet  HWaddr 54:be:f7:08:c2:1b  </span><br><span class="line">          inet addr:192.168.56.126  Bcast:192.168.56.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::56be:f7ff:fe08:c21b&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:114273 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:58866 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:73490903 (73.4 MB)  TX bytes:14294252 (14.2 MB)</span><br><span class="line">          Interrupt:20 Memory:f7f00000-f7f20000 </span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback  </span><br><span class="line">          inet addr:127.0.0.1  Mask:255.0.0.0</span><br><span class="line">          inet6 addr: ::1&#x2F;128 Scope:Host</span><br><span class="line">          UP LOOPBACK RUNNING  MTU:65536  Metric:1</span><br><span class="line">          RX packets:3942 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:3942 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0 </span><br><span class="line">          RX bytes:668121 (668.1 KB)  TX bytes:668121 (668.1 KB)</span><br></pre></td></tr></table></figure>
+
 <p>如果想要查看某个特定网络接口的信息，你可以将网络接口名称作为参数传给 <code>ifconfig</code>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig eth0</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">eth0      Link encap:Ethernet  HWaddr 54:be:f7:08:c2:1b  </span><br><span class="line">          inet addr:192.168.56.126  Bcast:192.168.56.255  Mask:255.255.255.0</span><br><span class="line">          inet6 addr: fe80::56be:f7ff:fe08:c21b&#x2F;64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:114273 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:58866 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:1000 </span><br><span class="line">          RX bytes:73490903 (73.4 MB)  TX bytes:14294252 (14.2 MB)</span><br><span class="line">          Interrupt:20 Memory:f7f00000-f7f20000</span><br></pre></td></tr></table></figure>
+
 <p>使用 <code>iproute2</code> 包提供的子命令，我们可以实现相同的功能。</p>
 <p>如果想要查看每个网络接口被配置的地址，可以输入不带参数的 <code>ip addr</code> 命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </span><br><span class="line">    link&#x2F;loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1&#x2F;8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1&#x2F;128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 54:be:f7:08:c2:1b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.56.126&#x2F;24 brd 192.168.56.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::56be:f7ff:fe08:c21b&#x2F;64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
 <p>如果想要查看某个特定网络接口的地址信息，你可以使用如下格式的命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr show eth0</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 54:be:f7:08:c2:1b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.56.126&#x2F;24 brd 192.168.56.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::56be:f7ff:fe08:c21b&#x2F;64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
 <p>事实上，<code>ip addr</code> 只是 <code>ip addr show</code> 命令的别名。</p>
 <p>如果你只关心网络接口本身，而不在意它们被配置的地址，那么你可以使用 <code>ip link</code> 子命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN </span><br><span class="line">    link&#x2F;loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 04:01:13:8a:a2:01 brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure>
+
 <p>如果想要查看某个特定网络接口的信息，那么你可以添加关键字 <code>show</code> 和对应网络接口的名字：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link show eth0</span><br></pre></td></tr></table></figure>
+
 <p>如果想要获得网络接口如何通信的统计数据，那么你可以给 <code>link</code> 子命令传入 <code>-s</code> 选项：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip -s link show eth0</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000</span><br><span class="line">    link&#x2F;ether 04:01:13:8a:a2:01 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    RX: bytes  packets  errors  dropped overrun mcast   </span><br><span class="line">    853144     14672    0       0       0       0      </span><br><span class="line">    TX: bytes  packets  errors  dropped carrier collsns </span><br><span class="line">    91257      537      0       0       0       0</span><br></pre></td></tr></table></figure>
+
 <p>那么我们如何找到我们的路由表呢？路由表包含了到达其他网络地址的路径信息，我们可以通过输入以下内容来打印当前的路由表：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route show</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">default via 107.170.58.1 dev eth0  metric 100</span><br><span class="line">107.170.58.0&#x2F;24 dev eth0  proto kernel  scope link  src 107.170.58.162 </span><br></pre></td></tr></table></figure>
+
 <p>这条命令的输出内容告诉我们，通往更大互联网的默认路由是通过 <code>eth0</code> 接口到达地址为 <code>107.170.58.1</code> 的网关。通过 <code>eth0</code> 接口可以访问地址为 <code>107.170.58.1</code> 的网关，并且 <code>eth0</code> 接口自身的 ip 地址是 <code>107.170.58.162</code>。</p>
 <p>&nbsp;</p>
 <h2 id="如何配置网络接口和地址"><a href="#如何配置网络接口和地址" class="headerlink" title="如何配置网络接口和地址"></a>如何配置网络接口和地址</h2><p>既然你已经熟悉了如何获取网络接口信息和与它们关联的地址信息，那么下一步就应该是了解如何修改网络接口的状态了。</p>
 <p>首先需要了解如何配置接口本身。你仍然可以使用 <code>ip link</code> 子命令，不过这次你需要传入 <code>set</code> 而不是 <code>show</code> 来修改配置。</p>
 <p>例如，我们可以通过使用以下命令来打开或关闭网络接口：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 up</span><br><span class="line">ip link <span class="built_in">set</span> eth1 down</span><br></pre></td></tr></table></figure>
+
 <p><strong>注意</strong>：当心不要意外关闭了你正连接的 VPS 的网络接口！</p>
 <p>你也可以使用 <code>ip link</code> 子命令来配置网络接口的属性。比如，如果你想打开或关闭网络接口的多播标志，你可以输入：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 multicast on</span><br><span class="line">ip link <span class="built_in">set</span> eth1 multicast off</span><br></pre></td></tr></table></figure>
+
 <p>你也可以输入如下的命令来修改 MTU 和分组队列的长度：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 mtu 1500</span><br><span class="line">ip link <span class="built_in">set</span> eth1 txqueuelen 1000</span><br></pre></td></tr></table></figure>
+
 <p>如果你正配置的网络接口是关闭（down）状态，那么你可以修改网络接口的名称和与之关联的 arp 标志：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> eth1 name eth10</span><br><span class="line">ip link <span class="built_in">set</span> eth1 arp on</span><br></pre></td></tr></table></figure>
+
 <p>如果要修改网络接口的地址，那么我们可以再次使用 <code>ip addr</code> 子命令。</p>
 <p>通过输入以下命令我们可以为网络接口添加一个地址：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr add IPADDRESS/NETPREFIX brd + dev INTERFACE</span><br></pre></td></tr></table></figure>
+
 <p>该命令的 <code>brd +</code> 部分会自动设置广播地址。每个网络接口都可以添加多个地址而不会出现任何问题。</p>
 <p>我们也可以执行相反的操作来删除网络地址。要删除指定网络接口的某个地址，可以使用如下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr del IPADDRESS/NETPREFIX dev INTERFACE</span><br></pre></td></tr></table></figure>
+
 <p>你也可以省略输入地址，这样与该网络接口关联的第一个被列出的地址将被删除。</p>
 <p>通过使用 <code>ip route [add | change | replace | delete ]</code> 语法，你也可以删除路由规则。但我们不会在这里介绍，因为大多数人不会定期对此进行调整。</p>
 <p>&nbsp;</p>
@@ -258,14 +279,19 @@
 <p>IP 路由规则（rule）的概念很难谈论，因为它非常依赖于具体的情况。基本上，你可以基于多个字段（包括目标地址，源地址，路由协议，数据包大小等）来决定如何路由流量。</p>
 <p>我们使用 <code>ip rule</code> 子命令使用此功能。基本查询命令遵循和其他子命令一样的语法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip rule show</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0:  from all lookup <span class="built_in">local</span> </span><br><span class="line">32766:  from all lookup main </span><br><span class="line">32767:  from all lookup default</span><br></pre></td></tr></table></figure>
+
 <p>这三条路由规则是内核配置的默认规则。第一行可以匹配任何流量，用于路由高优先级的流量。第二行是处理常规路由的主要规则。最后一行是空规则，如果上面的规则与数据包不匹配，则使用该行进行后处理（post-processing）。</p>
 <p>由 IPRoute2 配置的路由规则被存储在路由策略数据库（routing policy database）中。通过与规则集合进行匹配来选择该数据库中的路由策略。我们可以使用适当的操作来添加或删除规则。但是，你不应该在不知道自己在做什么的情况下执行这些操作。</p>
 <p>可以通过 <code>man</code> 查看 <code>ip rule</code> 的手册来进行进一步的学习。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">man ip         <span class="comment"># search for &quot;ip rule&quot;</span></span><br></pre></td></tr></table></figure>
+
 <p>我们将简要讨论的另一件事是通过这些工具来处理 arp 信息。处理这些信息的子命令被称作 <code>ip neigh</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip neigh</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">107.170.58.1 dev eth0 lladdr 00:00:5e:00:01:68 DELAY</span><br></pre></td></tr></table></figure>
+
 <p>默认情况下，这里至少应列出你的网关。ARP（Address Resolution Protocol）是地址解析协议的缩写，它可以通过 IP 地址来获取 MAC 地址。</p>
 <p>基本上，每当需要转发 IP 分组时，你的主机就会在本地网络上广播 ARP 请求，向网络中的其他主机询问谁拥有这个 IP 地址。拥有这个 IP 地址的主机将把自己的 MAC 地址回复给询问者，然后询问者就知道该把 IP 分组发给谁了。询问者会把 IP 地址到 MAC 地址的映射缓存到本地（一般持续 15 分钟），这样后续的分组在需要转发时就不需要再次通过 ARP 请求询问了。</p>
 <p>&nbsp;</p>
@@ -371,13 +397,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -404,7 +430,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
