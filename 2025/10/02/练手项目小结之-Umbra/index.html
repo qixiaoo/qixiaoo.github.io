@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0-rc2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="开端五月的某个早上，一觉醒来后顺手打开手机，发现收到了 JetBrains 的通知邮件 —— CLion 免费了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="练手项目小结之 Umbra">
+<meta property="og:url" content="http://yoursite.com/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="开端五月的某个早上，一觉醒来后顺手打开手机，发现收到了 JetBrains 的通知邮件 —— CLion 免费了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/Valgrind.png">
+<meta property="article:published_time" content="2025-10-02T01:26:38.000Z">
+<meta property="article:modified_time" content="2025-10-02T01:51:18.432Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="GTK 4">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/Valgrind.png">
+
+<link rel="canonical" href="http://yoursite.com/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>练手项目小结之 Umbra | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          练手项目小结之 Umbra
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-10-02 09:26:38 / 修改时间：09:51:18" itemprop="dateCreated datePublished" datetime="2025-10-02T09:26:38+08:00">2025-10-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="开端"><a href="#开端" class="headerlink" title="开端"></a>开端</h2><p>五月的某个早上，一觉醒来后顺手打开手机，发现收到了 JetBrains 的通知邮件 —— CLion 免费了。</p>
+<span id="more"></span>
+
+<p>大学时我曾短暂地体验过一段时间的 CLion，不过那时几乎不怎么用 C&#x2F;C++，也不懂 CMake 怎么配置，只是糊里糊涂地拿来写过一些零零碎碎的代码片段。再后来我装了双系统，日常使用切换到了 Linux，偶尔想学学 Linux 系统编程相关的东西，却发现能选择的 IDE 都不太好用。其中 VSCode 算是挺不错的了，不过我习惯了 JetBrains 系列的 IDE，总感觉 VSCode 用起来哪里有点不太舒服。</p>
+<p>所以当时看到 CLion 免费了的邮件后我就想着用 C 或者 C++ 写点什么，不过却一直都没想到什么用来练手的好点子。</p>
+<p>顺带一提，去年写 Flutter 的时候，为了 Debug 我去翻了翻 <code>media-kit</code> 的源代码，发现其在 Linux 平台下的实现用的是 C++ &#x2F; GTK3 &#x2F; MPV 这一套。当时花了很多时间也没弄明白，毕竟 GTK，MPV 和 OpenGL 我是一样都不会。</p>
+<p>虽然后来发现这个 Bug 是 Flutter 自己的问题，但自己还是想着有机会了的话就去试试 GTK。这下 CLion 免费了，连 IDE 不太趁手的问题也解决了。</p>
+<h2 id="CMake"><a href="#CMake" class="headerlink" title="CMake"></a>CMake</h2><p>既然都使用 CLion 了，那当然也得把 CMake 用起来（并不是）。</p>
+<p>CMake 虽然一直以来都被很多 C&#x2F;C++ 开源项目广泛使用，但其因为配置复杂也被不少人诟病。社区内也出现了像 Meson 之类的新秀。顺带一提，目前 GTK 和开源游戏引擎 Godot 都是默认使用 Meson 来构建项目的。</p>
+<p>虽然我也很想试试 Meson，不过考虑到 CMake 目前还是挺主流的，经常看见 C++ 项目里都会有一个 <code>CMakeLists.txt</code> 文件，所以感觉最好还是先了解一下 CMake 的用法。</p>
+<p>幸运地是，CMake 官方提供了一份<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/guide/tutorial/index.html">渐进式的入门教程</a>。跟着示例项目一步一步了解各项概念的基本用法，意外地发现并不是很难（错觉）。因为示例项目本身很简单，在不涉及复杂的依赖关系和环境配置的情况下，CMake 要配置的东西其实并不多，很容易给人简单的错觉。好在我自己的练手项目本身也就是个极小的玩具项目，因此使用 CMake 也不是什么问题。</p>
+<p>其实 CMake 的入门教程看完后，我惊讶地发现居然这么简单，然后心态膨胀地去翻了翻开源项目 <a target="_blank" rel="noopener" href="https://github.com/LizardByte/Sunshine">Sunshine</a> 的 CMake 配置文件。虽然不再像是第一次看见时那样一头雾水了，却还是发现项目复杂起来后构建配置也会随之越发复杂。也难怪 Android 的 Gradle 这么复杂了。</p>
+<h2 id="GTK-生态"><a href="#GTK-生态" class="headerlink" title="GTK 生态"></a>GTK 生态</h2><p>UI 框架的选择倒是不需要犹豫，毕竟 Flutter 自己在 Linux 上都用的是 GTK 3。</p>
+<p>在很久以前的文章里我曾吐槽过 GTK 的官方文档更像是一份详尽的 API 参考手册，而不太像是一份完善的学习教程。如果你是一个新手的话，只看官方文档可能还是会感觉摸不着头脑。</p>
+<p>不过这次好在我发现了一份大佬写的入门教程。<a target="_blank" rel="noopener" href="https://toshiocp.github.io/Gobject-tutorial/">GObject 教程</a> 和 <a target="_blank" rel="noopener" href="https://toshiocp.github.io/Gtk4-tutorial/">GTK 4 教程</a> 从头为新手介绍了 GTK 中的诸多基础概念，完美解答了我之前看官方文档时产生的种种疑惑。</p>
+<p>为什么里面混进去了一个 GObject 教程呢？因为 GTK 本身是使用 C 语言开发的，而众所周知，C 语言的语法极其简洁，缺乏很多现代编程语言所拥有的特性 —— 比如对面向对象编程的原生支持。GObject 则用 C 语言实提供了一个面向对象编程的实现，算是在某种层面上补齐了一部分 C 的短板。所以学习 GTK 是一定要先看看这份 <a target="_blank" rel="noopener" href="https://toshiocp.github.io/Gobject-tutorial/">GObject 教程</a> 的。</p>
+<p>GTK 自身除了依赖 GObject 之外，还依赖了多个其他库，如 GLib，GIO，Cairo，GDK 等等。在 Umbra 这个项目的开发过程中，如果用到了相关的功能，我经常会需要去查对应的文档。个人感觉其中查得最多的就是 GLib 的文档了。</p>
+<p>如果说 GObject 是提供了一套 OOP 的实现的话，那么 GLib 就是提供了一套 C 语言的基础设施。C 语言本身的标准库提供的功能很核心、很简洁，但这也意味着只使用标准库的话，那么有很多基础功能都必须得自己实现。</p>
+<p>GLib 帮我们减轻了这部分负担。它提供了一套常用的数据结构，如动态数组、链表、哈希表等，这几乎是每个程序都会使用到的数据结构。此外 GLib 还提供了一些内存管理工具，<code>g_autoptr</code> 和 <code>g_autofree</code> 这些宏极大地减轻了手动释放内存的痛苦。查看 <a target="_blank" rel="noopener" href="https://docs.gtk.org/glib/">GLib 的官方文档</a> 可以发现它还提供了种种类似的基础功能，如字符串操作工具、日志工具、跨平台支持等等。正是因为有了这些工具，我们用 C 语言开发程序才不至于特别痛苦。</p>
+<h2 id="GTK-开发体验"><a href="#GTK-开发体验" class="headerlink" title="GTK 开发体验"></a>GTK 开发体验</h2><p>虽然前面我赞美了 GLib 减少了开发 C 程序的痛苦，但是，不得不说使用 C 语言开发 GTK 4 程序还是有点痛苦的 —— 特别是对于那些用惯了现代编程语言和现代 GUI 框架的人来说。</p>
+<p>首先是 C 语言的问题。</p>
+<p>在 C 语言中没有诸多现代编程语言的特性，也没有垃圾回收，你需要使用指针手动管理自己分配的内存。这一点当然不能说是 C 语言的问题，甚至可以说是 C 语言接近底层的优势所在。但是，一旦场景变成了不太那么涉及底层的 GUI 开发，这个优势就变成负担了。你需要时刻关注你所使用的指针的生命周期，需要时刻提醒自己不要忘了及时释放内存。</p>
+<p>这一点在涉及到调用外部库函数时尤为突出。对于每个库函数你都需要去查阅文档，看清楚每个参数和返回值的指针所指向的数据的归属，以免忘记释放内存或者释放了不属于自己管理的内存。这虽然不至于造成太多的心智负担，却会不可避免地降低程序员的开发效率。—— 不过话说回来，这在某种程度上也是相关库函数的头文件中没有详细的文档注释导致的。</p>
+<p>总之，用 C 语言我有种在雷区蹦迪的感觉。尽管你知道哪里有雷，但因为一直在雷区蹦跶，难免会不小心踩到一两颗地雷。每当这时候我就会怀念起 Rust 的好了。甚至连之前觉得会严重拖慢重构进度的生命周期语法也变得眉清目秀起来。怪不得 Gnome 社区的不少项目也在积极从 C 语言迁移到 GTK 的其他编程语言 Binding 上去。</p>
+<p>然后是 GTK 使用 GObject 来实现面向对象编程的问题。</p>
+<p>这虽然看起来像是 GObject 的问题，但其实本身还是 C 语言过于简洁导致的。GObject 虽然实现了一套 OOP 工具，也提供了一套非常强大且现代的功能，但由于不是语言原生支持的，这导致其在使用时显得非常啰嗦。如果你需要自定义 GTK 组件，那么你就不得不写上一大串的模板代码。如果你还需要为自定义组件添加自定义的 signal 和 property，那么恭喜你，仅仅是模板代码可能就接近百行了。或许最佳实践应该是尽量组合使用 GTK 的原生控件？不得而知。反正我看 <code>libadwaita</code>（一个 GTK 的组件库）的每个组件的代码实现都非常长。</p>
+<p>最后还是 GTK 方面的问题。</p>
+<p>不过这与其说是问题，倒不如说是 GTK 作为 2020 年发布的 GUI 框架渐渐比不上现代的 GUI 框架罢了。对于 UI 开发的范式，我记得大致经历了三个阶段：界面和逻辑写在一起，界面和逻辑分离，用代码描述界面。在第一眼看到 GTK 4 的 Template 功能时，我以为它是在第三阶段。然而用着用着我才发现它是在第二阶段。Template 主要还是用于描述 UI 结构，数据绑定还是需要在代码里才能手动进行绑定。习惯了 React 开发 UI 后，看到 Template 我一下联想到了 JSX，但实际上它却更像是 HTML。</p>
+<p>虽然抱怨了 GTK 这么多用起来不太舒适的地方，但是不得不说我对用 C 来实现一套 GUI 框架还是充满敬意的。或许 GTK 有着很多问题，但不得不说 GTK 还是实现了它应该有的功能。</p>
+<h2 id="内存泄漏排查"><a href="#内存泄漏排查" class="headerlink" title="内存泄漏排查"></a>内存泄漏排查</h2><p>虽然我自认为在开发过程中自己有小心管理内存了，不过为了以防万一，最好还是用相关排查工具分析一下。</p>
+<p>在 AI 的推荐下我了解到了 <a target="_blank" rel="noopener" href="https://valgrind.org/">Valgrind</a> 这个工具。它拦截了程序对内存管理相关函数的调用，从而可以检测到代码里可能存在的内存泄漏。</p>
+<p>分析结果如下，确定出现了内存泄漏的地方还不少。根据报告信息定位到了源代码，脑测了下，的确是代码写得有问题，部分分支会导致内存泄漏的情况发生。</p>
+<img src="/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/Valgrind.png" class="">
+
+<p>居然能轻松发现内存泄漏的存在，只能说 Valgrind 这个工具让人感到非常惊喜。</p>
+<p>顺带一提，Valgrind 分析内存泄漏需要用到你的程序所依赖的库的调试符号。而 Arch 系发行版仓库里的库文件是默认没有调试符号的，因此必须去 <code>https://debuginfod.archlinux.org</code> 下载调试符号。也正因为如此，如果你的网络不佳的话，那么你会经历一段非常漫长且痛苦的下载时光（不要问我是怎么知道的）。</p>
+<h2 id="C-与内存安全"><a href="#C-与内存安全" class="headerlink" title="C 与内存安全"></a>C 与内存安全</h2><p>前面我提到了用 C 语言有种在雷区蹦迪的感觉，的确如此，因为我非常担心遇到安全问题。</p>
+<p>内存泄漏其实还不算太大的问题，因为只要不是泄漏得特别严重，对于 GUI 程序来说基本不会影响用户使用，大不了关闭程序重新打开得了。但是安全问题可不是这样。毕竟你也不希望只是打开一份文件，你的电脑就被莫名其妙地执行了一段恶意代码吧。</p>
+<p>对于需要手动管理指针和内存的语言，像我这种经验不够丰富的开发者很容易就会写出存在安全漏洞的代码，毕竟缓冲区溢出和 Double Free 可是非常常见的漏洞。虽然使用 GLib 的安全函数能减少问题出现的概率，不过个人总感觉不是很能够安心下来。</p>
+<p>又是怀念 Rust 好处的一天。</p>
+<h2 id="AI-使用体验"><a href="#AI-使用体验" class="headerlink" title="AI 使用体验"></a>AI 使用体验</h2><p>这次的项目开发中我频繁地用到了 AI。</p>
+<p>虽然很少直接让 AI 来写代码，不过在学习 GTK 相关 API 的用法时我经常会询问 AI。这样的好处是减少了我花在查阅文档上的时间。此外，对于一些不是很懂的概念可以一直追问下去，对于官方文档上没有给出 Demo 的 API 可以直接让 AI 给出用法示例，写完代码后还可以让 AI 来 Review 代码，可以说是非常方便了。</p>
+<p>不过目前 AI 也确实存在一些问题。可能是因为 GTK 相关的资料比较少，AI 的幻觉问题挺严重的，经常会编造不存在的 API。可能是需要手动设置 Prompt 优化吧，使用默认设置询问 AI 时，它给出的代码的代码风格有时不是很优雅。</p>
+<p>目前我遇到的最严重的问题是，尝试让 AI 重构一段代码时，它的输出结果来悄无声息地带上了一段会导致 Double Free 的代码。</p>
+<p>总之，AI 作为知识广度和深度都十分惊人的编程伙伴，对程序员的帮助是非常惊人的。在 AI 的帮助下学习新知识，比以往完全靠自学的模式的效率要高多了。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这次絮絮叨叨地说了很多，大部分都是一些自己在学习和开发时的个人感想。</p>
+<p>虽然说是项目的小结，但项目本身反而感觉没什么好说的。</p>
+<p>下一篇的文章就不知道是什么时候了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/C/" rel="tag"># C</a>
+              <a href="/tags/GTK-4/" rel="tag"># GTK 4</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/07/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-masiro/" rel="prev" title="练手项目小结之 masiro">
+      <i class="fa fa-chevron-left"></i> 练手项目小结之 masiro
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E7%AB%AF"><span class="nav-number">1.</span> <span class="nav-text">开端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CMake"><span class="nav-number">2.</span> <span class="nav-text">CMake</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GTK-%E7%94%9F%E6%80%81"><span class="nav-number">3.</span> <span class="nav-text">GTK 生态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GTK-%E5%BC%80%E5%8F%91%E4%BD%93%E9%AA%8C"><span class="nav-number">4.</span> <span class="nav-text">GTK 开发体验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%8E%92%E6%9F%A5"><span class="nav-number">5.</span> <span class="nav-text">内存泄漏排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E4%B8%8E%E5%86%85%E5%AD%98%E5%AE%89%E5%85%A8"><span class="nav-number">6.</span> <span class="nav-text">C 与内存安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C"><span class="nav-number">7.</span> <span class="nav-text">AI 使用体验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">8.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
