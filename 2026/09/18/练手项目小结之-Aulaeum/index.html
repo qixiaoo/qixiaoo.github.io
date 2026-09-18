@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.0.0-rc2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="开端老早就打算学学 OpenGL 了，只是因为各种原因一直没有系统地去学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="练手项目小结之 Aulaeum">
+<meta property="og:url" content="http://yoursite.com/2026/09/18/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Aulaeum/index.html">
+<meta property="og:site_name" content="Qin&#39;s Personal Blog">
+<meta property="og:description" content="开端老早就打算学学 OpenGL 了，只是因为各种原因一直没有系统地去学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-18T03:04:07.000Z">
+<meta property="article:modified_time" content="2026-09-18T03:07:58.450Z">
+<meta property="article:author" content="Qin">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="OpenGL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2026/09/18/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Aulaeum/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>练手项目小结之 Aulaeum | Qin's Personal Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Qin's Personal Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">起始之地</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2026/09/18/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Aulaeum/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Qin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qin's Personal Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          练手项目小结之 Aulaeum
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-09-18 11:04:07 / 修改时间：11:07:58" itemprop="dateCreated datePublished" datetime="2026-09-18T11:04:07+08:00">2026-09-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="开端"><a href="#开端" class="headerlink" title="开端"></a>开端</h2><p>老早就打算学学 OpenGL 了，只是因为各种原因一直没有系统地去学习。</p>
+<span id="more"></span>
+
+<p>在去年时，发现 Gnome 默认切换到了 Wayland 模式，于是自己想着干脆趁机体验了一下传说中的 Hyprland 和 Niri，发现折腾起来确实挺有趣的。</p>
+<p>后来在尝试动态壁纸软件时，误打误撞发现了一个利用 MPV 将视频作为壁纸的软件，以及一个可以把 Shader 作为桌面壁纸的软件，感觉非常神奇。稍微看了看源码，发现 Wayland 的 Layer Shell 协议居然支持使用 OpenGL 渲染内容。既然都可以使用 OpenGL 了，那么渲染 3D 模型肯定也不在话下，抱着这样的想法想着感觉正好可以利用这个点子学学 OpenGL 和 Wayland。</p>
+<h2 id="OpenGL"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</h2><p>虽然 Vulkan 距离问世已经也有十年了，但考虑到学习曲线的差异，从 OpenGL 开始来学习图形 API 是一个比较适合入门的选择。以及 OpenGL 还有丰富的学习教程。很多年前我就收藏了 <a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/">LearnOpenGL CN</a> 这个网站，它已经在我的收藏夹里默默吃灰很久了。作为目前公认的最好的现代 OpenGL 教程，从这里开始是再合适不过了。</p>
+<p>其实之前我也断断续续地看过一点 <a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/">LearnOpenGL CN</a> 的教程，但每次都卡在坐标变换和线性代数这块，于是又决定先从《计算机图形学》（仙人掌书）开始看起。不得不说，后者的几何变换的章节确实是很扎实地一步一步地从推导公式讲起，让我有种自己也能理解了开窍了的错觉。可惜看起来实在是有些枯燥，极大地消磨了学习的热情，导致我反复了几次也一直没能坚持看玩投影变换的那章。</p>
+<p>后面我意识到可以先不必去纠结投影矩阵是怎么生成的，而是先接受它然后用起来。事实上 <a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/">LearnOpenGL CN</a> 的教程也是这么做的，它将底层的数学细节用 <a target="_blank" rel="noopener" href="https://glm.g-truc.net/0.9.8/index.html">GLM</a> 这个库给隐藏了起来，从而让读者更容易入门。不得不说，对于从零入门的学习者而言，有时希望打好基础却反而会陷入到深坑里面。不妨先接受自己没能完全掌握的事实，等自己熟悉这个领域之后再回头学习也未尝不可。</p>
+<p>以前曾在论坛看到过有人分享自己的学习经历，用了“腌制”这个形象的比喻。一直泡在相关的内容里，最后发现自己就像是被泡入味了泡菜一般，发现之前一直很陌生的概念也逐渐熟知了。感觉自己也渐渐体验到了这种感觉。</p>
+<h2 id="glTF"><a href="#glTF" class="headerlink" title="glTF"></a>glTF</h2><p>我的目标是在 Linux 桌面上渲染 3D 模型，因此首先就得决定自己要支持渲染什么格式的模型。排除了过于简洁的 <code>obj</code> 格式以及比较冷门和专有的格式之外，<a target="_blank" rel="noopener" href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html"><code>glTF</code></a> 基本上就是最适合我的模型格式。</p>
+<p><code>glTF</code> 是 Khronos 工作组制定的一项 3D 模型格式规范，GPU 友好、API 无关并且易于分发。<code>glTF</code> 规范包含了两种模型格式，<code>.gltf</code> 和 <code>.glb</code>。而前者基本上就是一个普通的 JSON 文件，包含了渲染 3D 模型时所需要的顶点、图元、纹理、变换、动画等数据。这非常适合开发和调试时让开发者直接阅读模型的内容。你甚至可以在必要时用文本编辑器直接修改模型文件，可以说是非常方便了。</p>
+<p>考虑到用 C 语言直接处理 JSON 文件以及解析模型里 <code>accessor</code> 和 <code>buffer</code> 的数据还是很繁琐的，我直接使用了 <a target="_blank" rel="noopener" href="https://github.com/jkuhlmann/cgltf"><code>cgltf</code></a> 这个库，只要引入一个头文件就可以轻松实现模型的加载。这样也可以将更多的精力投入到渲染的部分上面。</p>
+<h2 id="PBR"><a href="#PBR" class="headerlink" title="PBR"></a>PBR</h2><p>PBR 全称是基于物理的渲染（Physically Based Rendering），听名字就知道这个功能少不了一堆令人害怕的数学公式。不过在跟着教程走了一遍之后，发现似乎不是想象中那种完全理解不了的难 —— 虽然的确还是有很多理解不能的公式，但它们的物理意义、它们的目的都大概了解了。有种囫囵吞枣的感觉，但总比一无所知要好得多。</p>
+<p>由于一开始是跟着教程来实现 PBR 的，后面在需要实现 glTF 规范 extension 中定义的功能时，发现 extension 是基于 glTF 规范内的 PBR 公式来描述自己的，这导致我完全不知道应该怎么对应的修改现有的 PBR 代码。因此我不得不回头重看了一遍 glTF 规范有关 PBR 的内容，好在原理是一致的，只是计算过程和方式有些出入，在 AI 的帮助下捋了捋官方实现的示例代码，总算是知道该如何去实现 extension 里的功能了。</p>
+<h2 id="Render-Doc"><a href="#Render-Doc" class="headerlink" title="Render Doc"></a>Render Doc</h2><p>一直都有听说渲染的 BUG 很难排查，感觉确实如此。Shader 代码并行运行在 GPU 上，一般来说做不到像 CPU 那样轻松地单步调试代码。</p>
+<p>开发过程中经常发现自己的实现渲染出来的效果很奇怪，但一时又找不到原因，既不能 <code>log</code> 输出日志，也没办法下断点单步调试。网上介绍的将数据作为颜色输出的技巧理解起来又确实过于抽象了。</p>
+<p>好在还有 Render Doc 这个工具。虽然用起来磕磕绊绊不太熟悉，不过查看渲染过程中数据状态的功能是实打实的好用。记得遇到过一个邪门的 <code>sRGB</code> 颜色空间 <code>mipmap</code> 生成的问题，要是没有  Render Doc 的话，我估计能卡在那里一辈子。</p>
+<h2 id="未完成与-AI"><a href="#未完成与-AI" class="headerlink" title="未完成与 AI"></a>未完成与 AI</h2><p>这个项目其实还是未完成。从去年末今年初的心血来潮开始开发，到中间决定休息一下，一直到现在完全没动力再继续了，可以说是拖了好久了。一开始其实是打算再加上非骨骼动画的动画实现以及自渲染 UI 的。结果在为了实现动画功能而重构完项目之后，懒癌发作一搁置就是好久。期间试着用 AI Agent 开发了好几个玩具，然后就再也没有动力古法编程继续开发了。就连这篇文章也是拖了好久，本来都不打算继续写了。</p>
+<p>AI 切切实实地拓宽了个人的能力边界，让人感想敢做以前觉得很麻烦的事了。一开始个人感觉 AI 可能只是加快了知识的流动速度，到现在 AI 已经可以脱离人类完成复杂的任务了。而肉眼可见的，我们现在才仅仅是站在了起点。</p>
+<h2 id="再见了，古法编程"><a href="#再见了，古法编程" class="headerlink" title="再见了，古法编程"></a>再见了，古法编程</h2><p>总之，再见了，古法编程。以制作玩具为导向的学习路线是很有趣的，而让 AI 直接为你制作玩具则更加有趣。学习不会消失，以学习为目的的古法编程还是有存在价值的。只是摸鱼一阵子之后发现 AI 已经把代码交付好了还是太有吸引力了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/C/" rel="tag"># C</a>
+              <a href="/tags/OpenGL/" rel="tag"># OpenGL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/10/02/%E7%BB%83%E6%89%8B%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93%E4%B9%8B-Umbra/" rel="prev" title="练手项目小结之 Umbra">
+      <i class="fa fa-chevron-left"></i> 练手项目小结之 Umbra
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E7%AB%AF"><span class="nav-number">1.</span> <span class="nav-text">开端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenGL"><span class="nav-number">2.</span> <span class="nav-text">OpenGL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#glTF"><span class="nav-number">3.</span> <span class="nav-text">glTF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PBR"><span class="nav-number">4.</span> <span class="nav-text">PBR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Render-Doc"><span class="nav-number">5.</span> <span class="nav-text">Render Doc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E6%88%90%E4%B8%8E-AI"><span class="nav-number">6.</span> <span class="nav-text">未完成与 AI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E8%A7%81%E4%BA%86%EF%BC%8C%E5%8F%A4%E6%B3%95%E7%BC%96%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">再见了，古法编程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Qin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
